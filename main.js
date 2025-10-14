@@ -206,7 +206,7 @@ function selectModel(modelIndex) {
 
   // Update model viewer (placeholder for actual GLB loading)
   const placeholder = document.getElementById("modelPlaceholder");
-  placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%;" id="viewer" disable-tap disable-pan disable-zoom></model-viewer>`;
+  placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%;" id="viewer" disable-tap disable-pan disable-zoom   interaction-prompt="none"></model-viewer>`;
 }
 
 // Select pattern
@@ -376,12 +376,14 @@ async function applyTextureBase64(base64Image) {
     labelMat.setAlphaMode("BLEND");
     labelMat.setAlphaCutoff(1);
 
-     const labelMatTextureUnder = materials.find((m) =>
+    const labelMatTextureUnder = materials.find((m) =>
       m.name.toLowerCase().includes("texture_under")
     );
 
     if (labelMatTextureUnder) {
-      labelMatTextureUnder.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 0]); // RGBA: white + 0 alpha
+      labelMatTextureUnder.pbrMetallicRoughness.setBaseColorFactor([
+        1, 1, 1, 0,
+      ]); // RGBA: white + 0 alpha
       labelMatTextureUnder.pbrMetallicRoughness.setBaseColorFactor("#ffffff"); // RGBA: white + 0 alpha
 
       labelMatTextureUnder.setAlphaMode("BLEND");
@@ -482,12 +484,18 @@ window.addEventListener("DOMContentLoaded", init);
 // Add this function to your existing JavaScript code
 function togglePatternsSection() {
   const patternsSection = document.querySelector(".patterns-section");
+  const materialColorUpdate = document.querySelector(".material-colour-change-div");
+  const customizeButton = document.getElementById("editCustomiseButton");
 
   // Hide patterns section only when Sipper Glass (category 2) is active
   if (currentCategory === 2) {
     patternsSection.style.display = "none";
+    materialColorUpdate.style.display = "none";
+    customizeButton.style.display = "none";
   } else {
     patternsSection.style.display = "block";
+    materialColorUpdate.style.display = "flex";
+    customizeButton.style.display = "block";
   }
 
   let selectCategoryFinal;
@@ -661,6 +669,30 @@ async function downloadPDF() {
   const model = categories[currentCategory].models[selectedModel];
   const modelViewer = document.querySelector("model-viewer");
 
+  const watermarkImg = await new Promise((resolve) => {
+    const img = new Image();
+    img.src = "./assets/images/watermark_a4_4m.jpg"; // 👈 Use your watermark file path
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    };
+  });
+
+  function addWatermark(pdf, imageDataUrl, pageWidth, pageHeight) {
+    const wmWidth = pageWidth;
+    const wmHeight = pageHeight;
+    const x = 0;
+    const y = 0;
+
+    pdf.setGState(new pdf.GState({ opacity: 0.5 })); // Set low opacity
+    pdf.addImage(imageDataUrl, "PNG", x, y, wmWidth, wmHeight);
+    pdf.setGState(new pdf.GState({ opacity: 1 })); // Reset opacity after adding
+  }
+
   // Store original size
   const originalWidth = modelViewer.style.width;
   const originalHeight = modelViewer.style.height;
@@ -687,6 +719,7 @@ async function downloadPDF() {
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
+  addWatermark(pdf, watermarkImg, pageWidth, pageHeight);
 
   // Load logo image from project directory
   const logoImg = await new Promise((resolve) => {
@@ -716,10 +749,34 @@ async function downloadPDF() {
     logoHeight
   );
 
+  function formatTextInChunks(text, chunkSize = 3) {
+    const words = text.trim().split(/\s+/);
+    const lines = [];
+
+    for (let i = 0; i < words.length; i += chunkSize) {
+      lines.push(words.slice(i, i + chunkSize).join(" "));
+    }
+
+    return lines;
+  }
+
   // Title in top center (slightly below logo)
   pdf.setFontSize(20);
   pdf.setFont("helvetica", "bold");
-  pdf.text(model.capacity, pageWidth / 2, 80, { align: "center" });
+  // pdf.text(model.capacity, pageWidth / 2, 80, { align: "center" });
+  const textLines = formatTextInChunks(model.capacity, 3); // 3 words per line
+
+  const maxWidth = pageWidth * 0.9; // 90% of page width
+  const startX = pageWidth / 2; // center
+  const startY = 80;
+
+  pdf.setFontSize(20);
+  pdf.setFont("helvetica", "bold");
+
+  // Print each line, centered
+  textLines.forEach((line, i) => {
+    pdf.text(line, startX, startY + i * 25, { align: "center", maxWidth });
+  });
 
   // Main image centered
   const imgWidth = pageWidth - 15;
@@ -732,8 +789,9 @@ async function downloadPDF() {
   // pdf.addPage();
   // --- Page 2 (pattern texture image) ---
   if (model.type !== "sipper" && (base64Global || global_logo_file)) {
-
     pdf.addPage();
+
+    addWatermark(pdf, watermarkImg, pageWidth, pageHeight);
 
     pdf.addImage(
       logoImg,
@@ -790,8 +848,8 @@ async function downloadPDF() {
         imgWidth,
         imgHeight
       );
-    } 
-    
+    }
+
     if (global_logo_file) {
       const patternImgData = await new Promise((resolve, reject) => {
         const img = new Image();
@@ -838,7 +896,7 @@ async function downloadPDF() {
         imgWidth,
         imgHeight
       );
-    } 
+    }
   }
 
   // Save PDF
@@ -1040,7 +1098,7 @@ function selectModel(modelIndex) {
 
   let camera_orbit = "";
   if (model.type == "round" && modelIndex == 0) {
-    camera_orbit = `camera-orbit="-1263deg 53.54deg 0.1261m"`;
+    camera_orbit = `camera-orbit="-1.581deg 52.87deg 0.1261m" `;
   } else if (model.type == "rectangle" && modelIndex == 0) {
     camera_orbit = `camera-orbit="-1443deg 53.14deg 0.4303m"`;
   } else if (model.type == "sipper" && modelIndex == 0) {
@@ -1070,6 +1128,7 @@ function selectModel(modelIndex) {
         ${camera_orbit}
         min-field-of-view="28deg"
         max-field-of-view="30deg"
+        interaction-prompt="none"
         >
     </model-viewer>`;
 
@@ -1361,7 +1420,7 @@ function changeToLogoModel() {
   modelViewer.src = originalSrc;
 }
 
-let global_logo_file = '';
+let global_logo_file = "";
 // When file is selected
 fileInput.addEventListener("change", async (event) => {
   const file = event.target.files[0];
@@ -1388,26 +1447,26 @@ fileInput.addEventListener("change", async (event) => {
 
   // Set the image source to trigger loading
   img.src = imageURL;
-  
+
   // reader - and setting value for upload logo
   const reader = new FileReader();
-reader.onload = function (e) {
-  const dataUrl = e.target.result;
+  reader.onload = function (e) {
+    const dataUrl = e.target.result;
 
-  const img = new Image();
-  img.onload = () => {
-    applyLogo(img);
-    // No need to revoke Data URL
-  };
-  img.onerror = () => {
-    console.error("Failed to load image");
-  };
-  img.src = dataUrl;
+    const img = new Image();
+    img.onload = () => {
+      applyLogo(img);
+      // No need to revoke Data URL
+    };
+    img.onerror = () => {
+      console.error("Failed to load image");
+    };
+    img.src = dataUrl;
 
-  // ✅ Save the base64 string for later use in the PDF
-  global_logo_file = dataUrl;
-};
-reader.readAsDataURL(file);
+    // ✅ Save the base64 string for later use in the PDF
+    global_logo_file = dataUrl;
+  };
+  reader.readAsDataURL(file);
 });
 
 async function applyLogo(logoImage) {
@@ -1538,7 +1597,7 @@ function renderColorOptions(type) {
       label.classList.add("color-palette-card");
       const img = document.createElement("img");
       img.src = "./assets/images/color-picker-img.svg";
-      img.classList.add("custom-picker-img")
+      img.classList.add("custom-picker-img");
       img.alt = "Color Picker";
       label.appendChild(img);
 
@@ -1607,8 +1666,8 @@ function applyMaterialColor(type, color) {
       material.setAlphaMode("OPAQUE");
       material.setEmissiveFactor([0, 0, 0]);
     }
-    
-    if (material.name == 'bottom_3') {
+
+    if (material.name == "bottom_3") {
       pbr.setMetallicFactor(0.5);
       pbr.setRoughnessFactor(0);
     }
@@ -1654,10 +1713,10 @@ function applyMaterialColor(type, color) {
       material.pbrMetallicRoughness.setRoughnessFactor(0.5);
       material.pbrMetallicRoughness.setBaseColorFactor(newColor);
 
-      if (material.name == 'bottom_3') {
-      material.pbrMetallicRoughness.setMetallicFactor(0.5);
-      material.pbrMetallicRoughness.setRoughnessFactor(0);
-    }
+      if (material.name == "bottom_3") {
+        material.pbrMetallicRoughness.setMetallicFactor(0.5);
+        material.pbrMetallicRoughness.setRoughnessFactor(0);
+      }
     };
 
     // Apply color to main material (lid or bottom)

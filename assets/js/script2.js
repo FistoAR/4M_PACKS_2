@@ -20,71 +20,126 @@ function clearCanvas() {
 
 // sessionStorage.setItem("model_type", "rectangle");
 
-const chosenModel = sessionStorage.getItem("model_type") ? sessionStorage.getItem("model_type") : 'sipper';
+const chosenModel = sessionStorage.getItem("model_type")
+  ? sessionStorage.getItem("model_type")
+  : "sipper";
 
-const channel = new BroadcastChannel('session-sync');
+const channel = new BroadcastChannel("session-sync");
 
- channel.onmessage = (event) => {
+channel.onmessage = (event) => {
   if (event.data.type) {
     console.log("received message");
     // const chosenModel = sessionStorage.getItem("model_type") ? sessionStorage.getItem("model_type") : 'sipper';
     // console.log("Chosen mode: ", chosenModel);
     // console.log("Event type: ", event.data.type);
-    sessionStorage.setItem('model_type', event.data.type); 
+    sessionStorage.setItem("model_type", event.data.type);
     // setSelectedModelContent();
     window.location.reload();
     window.location.reload();
   }
 };
 
-document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') {
-      location.reload();
-    }
-  });
+document.addEventListener("visibilitychange", function () {
+  if (document.visibilityState === "visible") {
+    location.reload();
+  }
+});
 
-const templateContainer = document.getElementById('template-container');
+const templateContainer = document.getElementById("template-container");
 
-setSelectedModelContent(chosenModel)
+setSelectedModelContent(chosenModel);
 
 function setSelectedModelContent(chosenModel) {
-  if (chosenModel == 'sipper') {
+  if (chosenModel == "sipper") {
     document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for Sipper Containers<br><a href="./index.html">Back to home</a></div>`;
   }
-setBackgroundImage(`./assets/images/images/default_${chosenModel}.png`, false);
-// setBackgroundImage("/assets/images/images/default_round.png", false);
-createTemplates(chosenModel);
+  setBackgroundImage(
+    `./assets/images/images/default_${chosenModel}.png`,
+    false
+  );
+  // setBackgroundImage("/assets/images/images/default_round.png", false);
+  createTemplates(chosenModel);
 }
-
 
 function createTemplates(chosenModel) {
-    templateContainer.innerHTML = `
-        <img src="./assets/images/images/default_${chosenModel}.png" alt="template1" title="template1"
-            loading="eager" width="5%" height="auto" class="template-image selected" id="template1"
-            template-no=1 data-theme="black">
-     
-            <img src="./assets/images/pattern_images/${chosenModel}_green.png" alt="template2" title="template2"
-            loading="eager" width="5%" height="auto" class="template-image" id="template2"
-            template-no=1 data-theme="white">
+  templateContainer.innerHTML = `
+    <img src="./assets/images/images/default_${chosenModel}.png" alt="template1" title="template1"
+        loading="eager" width="5%" height="auto" class="template-image selected" id="template1"
+        template-no=1 data-theme="black">
 
-        <img src="./assets/images/pattern_images/${chosenModel}_brown.png" alt="template3" title="template3"
-            loading="eager" width="5%" height="auto" class="template-image" id="template3"
-            template-no=2 data-theme="white">
+    <img src="./assets/images/pattern_images/${chosenModel}_green.png" alt="template2" title="template2"
+        loading="eager" width="5%" height="auto" class="template-image" id="template2"
+        template-no=1 data-theme="white">
 
-        <img src="./assets/images/pattern_images/${chosenModel}_mix.png" alt="template4" title="template4"
-            loading="eager" width="5%" height="auto" class="template-image" id="template4"
-            template-no=3 data-theme="black">
-        
-        <img src="./assets/images/pattern_images/${chosenModel}_mix.png" alt="custom_template" title="custom_template"
-            loading="eager" width="5%" height="auto" class="custom-template-button" id="custom_template"
-            template-no=3 data-theme="black">
-    `;
+    <img src="./assets/images/pattern_images/${chosenModel}_brown.png" alt="template3" title="template3"
+        loading="eager" width="5%" height="auto" class="template-image" id="template3"
+        template-no=2 data-theme="white">
 
-    const customButton = templateContainer.querySelector(".custom-template-button");
-    customButton.addEventListener("click", ()=> {
+    <img src="./assets/images/pattern_images/${chosenModel}_mix.png" alt="template4" title="template4"
+        loading="eager" width="5%" height="auto" class="template-image" id="template4"
+        template-no=3 data-theme="black">
 
-    });
+    <img src="./assets/images/img_upload_icon.png" alt="custom_template" title="custom_template"
+        loading="eager" width="5%" height="auto" class="custom-template-button" id="custom_template"
+        template-no=3 data-theme="black">
+
+    <input type="file" accept="image/*" id="customTemplateFileInput" style="display: none;">
+  `;
+
+  const customButton = templateContainer.querySelector(
+    ".custom-template-button"
+  );
+  const fileInput = templateContainer.querySelector("#customTemplateFileInput");
+
+  // 👇 Trigger file picker on custom button click
+  customButton.addEventListener("click", () => {
+    fileInput.click();
+  });
+
+  // 👇 Handle file selection
+  fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const dataUrl = e.target.result;
+
+    const img = new Image();
+    img.onload = function () {
+      const requiredWidth =  (chosenModel == 'round') ? 2908 : 1926;   // ✅ Set your required width
+      const requiredHeight = (chosenModel == 'round') ? 448 : 1289;;  // ✅ Set your required height
+
+      if (img.width !== requiredWidth || img.height !== requiredHeight) {
+        alert(`Image must be exactly ${requiredWidth}x${requiredHeight} pixels.`);
+        return;
+      }
+
+      // ✅ Passed validation — proceed with your logic
+      document
+        .querySelectorAll(".dropdown-content1 img")
+        .forEach((btn) => btn.classList.remove("selected"));
+
+      customButton.classList.add("selected");
+
+      setBackgroundImage(dataUrl, true);
+
+      const theme = customButton.getAttribute("data-theme") || "black";
+      doTemplateChangeWithCustomText(theme);
+    };
+
+    img.onerror = function () {
+      alert("Failed to load the image.");
+    };
+
+    img.src = dataUrl;
+  };
+
+  reader.readAsDataURL(file);
+});
+
 }
+
 // function createTemplates(chosenModel) {
 //     // Start with the first static image
 //     let templateHTML = `
@@ -105,7 +160,6 @@ function createTemplates(chosenModel) {
 //     // Set the inner HTML of the container
 //     templateContainer.innerHTML = templateHTML;
 // }
-
 
 function setBackgroundImage(url, booleanValue) {
   fabric.Image.fromURL(url, (img) => {
@@ -349,8 +403,9 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
 
           // Calculate the position to center the logo (if desired)
           let left = (canvasWidth - newWidth) / 2;
-          const newleft = (chosenModel == 'round') ? 50 : (canvasWidth - newWidth) / 2;
-          left = newleft
+          const newleft =
+            chosenModel == "round" ? 50 : (canvasWidth - newWidth) / 2;
+          left = newleft;
           const topPosition = (top || (canvasHeight - newHeight) / 2) + 30; // Use provided 'top' or center
 
           img.set({
@@ -501,8 +556,8 @@ function addText(textContent, color, baseFontSize = 16) {
   topPercentage = 2;
   leftPercentage = 0.68;
 
-  topPercentage = (chosenModel == 'round') ? 0.5 : 2;
-  leftPercentage = (chosenModel == 'round') ? 1.35 : 0.68;
+  topPercentage = chosenModel == "round" ? 0.5 : 2;
+  leftPercentage = chosenModel == "round" ? 1.35 : 0.68;
 
   const top = canvasHeight * topPercentage;
   const left = canvasWidth * leftPercentage;
@@ -683,11 +738,11 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
   let leftPercentage = 0.1; // Default 10% from the left of the canvas
 
   fontSizeValue = baseFontSize * 0.8; // Default font size
-  bottomOffset = -18; 
-  bottomOffset = (chosenModel == 'round') ? 4.5 : -18;
+  bottomOffset = -18;
+  bottomOffset = chosenModel == "round" ? 4.5 : -18;
   leftPercentage = 0.7;
 
-  leftPercentage = (chosenModel == 'round') ? 2.35 : 0.7;
+  leftPercentage = chosenModel == "round" ? 2.35 : 0.7;
 
   const bottom = (canvasHeight * bottomOffset) / 10; // Adjust the bottom percentage to fit canvas height
   const top = canvasHeight - bottom; // Set the top position relative to the bottom
@@ -732,6 +787,9 @@ let isChanged = false;
 // Event listener for selecting a template (for example from dropdown or other interface)
 document.querySelectorAll(".dropdown-content1 img").forEach((img) => {
   img.addEventListener("click", function (e) {
+    if (img.classList.contains("custom-template-button")) {
+      return;
+    }
     document
       .querySelectorAll(".dropdown-content1 img")
       .forEach((btn) => btn.classList.remove("selected"));
@@ -1107,17 +1165,16 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
         const existingLogo = canvas
           .getObjects()
           .find((obj) => obj.className === "logo");
-          
-          if (existingLogo) {
-            // If the logo already exists, update its source image
-            fabric.Image.fromURL(base64Image, function (img) {
-              // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
-              const imgWidth = img.width;
-              const imgHeight = img.height;
-              
-              let scaleX = 1;
-              let scaleY = 1;
-            
+
+        if (existingLogo) {
+          // If the logo already exists, update its source image
+          fabric.Image.fromURL(base64Image, function (img) {
+            // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+
+            let scaleX = 1;
+            let scaleY = 1;
 
             if (imgWidth > maxWidth || imgHeight > maxHeight) {
               const widthRatio = maxWidth / imgWidth;
@@ -1126,8 +1183,8 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
 
               scaleX = scaleY = scaleRatio;
             }
-  const leftPos = (canvas.width - img.width * scaleX) / 2;
-              console.log(`Left position update: ${leftPos}`);
+            const leftPos = (canvas.width - img.width * scaleX) / 2;
+            console.log(`Left position update: ${leftPos}`);
             // Update the existing logo's image source
             existingLogo.setElement(img.getElement());
             existingLogo.set({
@@ -1146,7 +1203,7 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
             // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
             const imgWidth = img.width;
             const imgHeight = img.height;
-            
+
             let scaleX = 1;
             let scaleY = 1;
             const leftPos = (canvas.width - img.width * scaleX) / 2;
@@ -2305,8 +2362,8 @@ canvas.on("object:moving", function (event) {
 
       // Find a free spot to move the object
       const { left, top } = findNonOverlappingPosition(baseLeft, baseTop);
-        console.warn(`returned left position: ${left}`)
-        console.warn(`returned top position: ${top}`)
+      console.warn(`returned left position: ${left}`);
+      console.warn(`returned top position: ${top}`);
       obj.animate(
         { left, top },
         {
@@ -3494,7 +3551,6 @@ function updateCustomTextStyleButtons(textObj) {
   const italicBtn = document.getElementById("custom-text-italic");
   const underlineBtn = document.getElementById("custom-text-underline");
 
-
   if (!textObj || textObj.className !== "customTextText") {
     // Clear button highlights if something else is selected
     boldBtn.classList.remove("text-style-active");
@@ -4018,7 +4074,6 @@ function updateFontSizeCustomText(fontSize) {
 // }
 
 canvas.on("object:modified", function (event) {
-    
   const obj = event.target;
 
   // Check if the angle has changed (indicating rotation)
@@ -4304,22 +4359,21 @@ saveButton.addEventListener("click", () => {
   document.body.removeChild(link);
 });
 
- document.getElementById("apply").addEventListener("click", () => {
-    const dataURL = canvas.toDataURL({
-        format: "png",
-        quality: 1.0,
-        multiplier: 4
-    });
+document.getElementById("apply").addEventListener("click", () => {
+  const dataURL = canvas.toDataURL({
+    format: "png",
+    quality: 1.0,
+    multiplier: 4,
+  });
 
-    // Send image back to parent window
-    if (window.opener) {
-        window.opener.postMessage(dataURL, "*"); // Use specific origin in production
-    }
+  // Send image back to parent window
+  if (window.opener) {
+    window.opener.postMessage(dataURL, "*"); // Use specific origin in production
+  }
 
-    // Close the editor window
-    window.close();
+  // Close the editor window
+  window.close();
 });
-
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "Delete" || e.key === "Backspace") {
@@ -4339,15 +4393,14 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
-
 const navBackButton = document.getElementById("navBackButton");
-navBackButton.addEventListener("click", ()=>{
+navBackButton.addEventListener("click", () => {
   window.close();
 
   // If window is not closed, redirect to index.html after a short delay
   setTimeout(() => {
     if (!window.closed) {
-      window.location.replace('index.html');
+      window.location.replace("index.html");
     }
   }, 100);
 });
