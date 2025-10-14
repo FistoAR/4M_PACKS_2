@@ -1,0 +1,460 @@
+body {
+    /* overflow-y: auto; */
+}
+
+#templateDesignButton {
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+    animation: pulse 1.5s infinite;
+}
+
+.logoSection {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 90vh;
+    background: url('../images/backgroundNoLeaf.webp') no-repeat bottom;
+}
+
+@media screen and (max-width: 1150px) {
+    .logoSection {
+        flex-direction: column;
+    }
+}
+
+.left-side-section {
+    flex: 1;
+    padding: 2%;
+    background: white;
+    overflow-y: auto;
+    max-height: 90vh;
+    padding-bottom: 80px;
+}
+
+.right-side-section {
+    flex: 3;
+    position: relative;
+}
+
+@media screen and (max-width: 600px) {
+    .right-side-section {
+        padding-bottom: 20px;
+    }
+}
+
+
+.left-side-section .upload2 {
+    display: block;
+}
+
+.left-side-section .uparrow2 {
+    transform: rotate(180deg);
+}
+
+.bottle-model-header {
+    font-weight: bold;
+    font-size: 20px;
+    margin: 1em 0;
+    color: #1c5aa7;
+}
+
+.top-color-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 1em 0;
+    margin-top: 10%;
+    color: #1c5aa7;
+}
+
+.top-input-container {
+    display: flex;
+    align-items: center;
+    gap: 5%;
+}
+
+.top-input-container > * {
+    flex: 1;
+}
+
+.top-input-container input{
+    border: 2px solid black;
+    padding: 1% !important;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 !important;
+    height: 40px;
+}
+
+.top-input-container input[type="text"] {
+    font-size: 18px;
+    padding: .5em!important;
+    cursor: unset;
+}
+
+.top-input-container img {
+    display: none;
+}
+
+.colorCodes {
+    position: relative;
+}
+
+.model-buttons-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: fit-content;
+    gap: 10%;
+    margin-top: 2%;
+}
+
+.model-buttons-container button {
+    width: fit-content;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.model-buttons-container button img {
+    max-width: 200px;
+    max-height: 200px;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid black;    
+    cursor: pointer;
+    /* transition: all .3s ease-in-out; */
+}
+
+.model-buttons-container button img:hover {
+    border: 1px solid #1b59a7;
+}
+
+@media screen and (max-width: 1150px) {
+    .model-buttons-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.bg-images-container {
+    margin-top: 10%;
+}
+
+.bg-images-container p {
+    font-weight: bold;
+    font-size: 20px;
+    margin: .5em 0;
+    color: #1c5aa7;
+}
+
+.bg-buttons-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 1em 0;
+    width: fit-content;
+    gap: 10%;
+}
+
+.bg-buttons-container button {
+    width: fit-content;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+.bg-buttons-container button img {
+    max-width: 150px;
+    max-height: 150px;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid black;    
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+
+.right-side-section model-viewer{
+    width: 100%;
+}
+
+@media screen and (max-width: 1150px) {
+    .right-side-section model-viewer {
+        min-height: 70vh;
+        margin-bottom: 10px;
+    }
+}
+
+.right-side-section .model-export-button-container {
+    background: transparent;
+    position: absolute;
+
+}
+
+.right-side-section .center-img-opactity {
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+}
+
+#exportGLBButton{
+    margin-right: 10px;
+}
+
+.bottleChangeButton img.active {
+    border: 2px solid #1b59a7;
+    background: #fefefe;
+}
+
+
+/* stone image */
+.stone-img-bg {
+    position: absolute;
+    top: 84%;
+    left: 49%;
+    transform: translate(-50%, -50%);
+    max-width: 500px;
+}
+
+.stone-img-bg.normalStone {
+    top: 84%;
+    left: 49%;
+}
+
+.stone-img-bg.brownStone {
+    top: 82%;
+    left: 49%;
+}
+
+.stone-img-bg.greenStone {
+    top: 72% !important;
+    left: 47% !important;
+}
+
+@media screen and (max-width: 900px) {
+    .stone-img-bg.greenStone {
+        left: 44%;
+    }
+}
+
+@media only screen and (width: 820px) {
+    .stone-img-bg.greenStone {
+        top: 71% !important;
+    }
+}
+
+.stone-img-bg img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+@media screen and (max-width: 1600px) {
+    .stone-img-bg {
+        max-width: 400px;
+        
+    }
+    .model-export-button-container {
+        bottom: 6% !important;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .left-img-bg img,
+    .right-img-bg img{
+        width: 75%;
+    }
+
+    .right-img-bg {
+        right: 0 !important;
+        display: flex;
+        align-items: end;
+        justify-content: flex-end;
+    }
+
+    .left-img-bg, .right-img-bg {
+        top: 55% !important;
+    }
+
+    .right-img-bg.custom {
+        top: 60% !important;
+    }
+}
+
+.model-export-button-container {
+    z-index: 9999;
+    position: relative;
+}
+
+@media screen and (max-width: 1150px) {
+    .right-side-section {
+        min-height: 81vh;
+    }
+}
+
+@media screen and (min-width: 884px) and (max-width: 900px) and (min-height: 1000px) and (max-height: 1200px) {
+    .right-side-section {
+        min-height: 79vh;
+    }
+}
+
+@media screen and (min-width: 790px) and (max-width: 801px) and (min-height: 1000px) and (max-height: 1200px) {
+    .right-side-section {
+        min-height: 75vh !important;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .stone-img-bg {
+        max-width: 275px;
+        top: 82.75%;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    body {
+        overflow: unset !important;
+        /* over */
+    }
+}
+
+@media screen and (min-width: 1150px) {
+    body {
+        overflow: hidden !important;
+    }
+}
+
+/* popup overlay */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    width: 350px;
+    display: none;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translate(-50%, -60%);
+    }
+    to {
+        transform: translate(-50%, -50%);
+    }
+}
+
+.popup h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+.popup input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.popup button {
+    width: 48%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.popup button.submit {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.popup button.submit:hover {
+    background-color: #45a049;
+}
+
+.popup button.close {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.popup button.close:hover {
+    background-color: #c0392b;
+}
+
+.popup .popup-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup .popup-footer button {
+    width: 48%;
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.97);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+        transform: scale(0.97);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    }
+} 
+
+
+
+/* loading spinner */
+/* Basic styling for the spinner */
+.spinner {
+    border: 4px solid #f3f3f3; /* Light gray */
+    border-top: 4px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+    margin: 20px auto;
+    display: block;
+    position: absolute;
+    top: 45%;
+    left: 48%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Keyframes for the spin animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

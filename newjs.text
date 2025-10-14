@@ -1,0 +1,526 @@
+// Custom Text Manager
+class CustomTextManager {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.customTexts = new Map(); // Store custom text objects with unique IDs
+        this.textCounter = 0;
+        this.activeTextId = null;
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.createCustomTextDropdown();
+    }
+
+    // Create the main custom text dropdown
+    createCustomTextDropdown() {
+        const customTextSection = document.getElementById('customText1');
+        if (!customTextSection) {
+            console.error('Custom text section not found');
+            return;
+        }
+
+        // Clear existing content and rebuild
+        customTextSection.innerHTML = `
+            <div class="customText-header" onclick="customTextManager.toggleCustomTextDropdown()">
+                <h2>Custom Text</h2>
+                <img src="./assets/images/downarrow.png" alt="uparrow" title="uparrow" loading="eager"
+                    width="5%" height="auto" class="uparrow">
+            </div>
+            <div class="customTextsec1">
+                <button id="addCustomTextBtn" class="add-custom-text-btn">+ Add Custom Text</button>
+                <div id="customTextList" class="custom-text-list"></div>
+                <div id="customTextControls" class="custom-text-controls" style="display: none;">
+                    <textarea id="customTextArea" placeholder="Type your custom text here"></textarea>
+                    
+                    <select id="customTextFont-family">
+                        <option selected>Font family</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Tahoma">Tahoma</option>
+                        <option value="Trebuchet MS">Trebuchet MS</option>
+                        <option value="Comic Sans MS">Comic Sans MS</option>
+                        <option value="Lucida Console">Lucida Console</option>
+                        <option value="Roboto">Roboto</option>
+                    </select>
+                    
+                    <select id="customTextFont-style">
+                        <option value="normal" selected>Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="italic">Italic</option>
+                        <option value="underline">Underline</option>
+                        <option value="bold italic">Bold Italic</option>
+                    </select>
+                    
+                    <div class="fontSizeDiv">
+                        <p>Font size: </p>
+                        <input type="number" id="customTextFontSize" value="16" min="8" max="72">
+                    </div>
+                    
+                    <div class="customTextalignment-container" style="display: flex; align-items: center;">
+                        <div class="customTextalignment1" style="display: flex; align-items: center;">
+                            <img src="./assets/images/left.png" alt="lefticon" title="lefticon" loading="eager"
+                                width="5%" height="auto" class="alignment-icon" data-align="left">
+                            <img src="./assets/images/center.png" alt="centericon" title="centericon"
+                                loading="eager" width="5%" height="auto" class="alignment-icon" data-align="center">
+                            <img src="./assets/images/right.png" alt="righticon" title="righticon"
+                                loading="eager" width="5%" height="auto" class="alignment-icon" data-align="right">
+                           
+                        </div>
+                        <input type="color" id="customTextColor" name="color" value="#000000" style="margin-left: 10px;">
+                    </div>
+                    
+                    <div class="custom-text-actions">
+                        <button id="deleteCustomTextBtn" class="delete-custom-text-btn">Delete Text</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    setupEventListeners() {
+        document.addEventListener('click', (e) => {
+            // Add new custom text button
+            if (e.target.id === 'addCustomTextBtn') {
+                this.addNewCustomText();
+            }
+            
+            // Delete custom text button
+            if (e.target.id === 'deleteCustomTextBtn') {
+                this.deleteActiveCustomText();
+            }
+            
+            // Custom text item click
+            if (e.target.classList.contains('custom-text-item')) {
+                this.selectCustomText(e.target.dataset.textId);
+            }
+            
+            // Alignment icons
+            if (e.target.classList.contains('alignment-icon')) {
+                this.updateAlignment(e.target.dataset.align);
+            }
+        });
+
+        document.addEventListener('input', (e) => {
+            if (e.target.id === 'customTextArea') {
+                this.updateActiveTextContent(e.target.value);
+            }
+            if (e.target.id === 'customTextFontSize') {
+                this.updateActiveFontSize(parseInt(e.target.value));
+            }
+            if (e.target.id === 'customTextColor') {
+                this.updateActiveColor(e.target.value);
+            }
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.id === 'customTextFont-family') {
+                this.updateActiveFontFamily(e.target.value);
+            }
+            if (e.target.id === 'customTextFont-style') {
+                this.updateActiveFontStyle(e.target.value);
+            }
+        });
+    }
+
+    toggleCustomTextDropdown() {
+        const customTextSection = document.getElementById('customText1');
+        const customTextSec = customTextSection.querySelector('.customTextsec1');
+        const arrow = customTextSection.querySelector('.uparrow');
+        
+        if (customTextSec.style.display === 'none' || !customTextSec.style.display) {
+            customTextSec.style.display = 'block';
+            customTextSection.classList.add('active-customText');
+            arrow.src = './assets/images/uparrow.png';
+        } else {
+            customTextSec.style.display = 'none';
+            customTextSection.classList.remove('active-customText');
+            arrow.src = './assets/images/downarrow.png';
+        }
+    }
+
+    addNewCustomText() {
+        this.textCounter++;
+        const textId = `customText_${this.textCounter}`;
+        
+        // Calculate position for new text (spread them out)
+        const canvasWidth = this.canvas.getWidth();
+        const canvasHeight = this.canvas.getHeight();
+        
+        const baseTop = canvasHeight * 0.3;
+        const offsetTop = (this.textCounter - 1) * 40; // Offset each new text
+        const left = canvasWidth * 0.5;
+        
+        // Create fabric text object
+        const fabricText = new fabric.Text(`Custom Text ${this.textCounter}`, {
+            left: left,
+            top: baseTop + offsetTop,
+            fill: '#000000',
+            fontSize: 16,
+            fontFamily: 'Arial',
+            textAlign: 'left',
+            className: 'customText',
+            customTextId: textId
+        });
+        
+        // Add to canvas
+        this.canvas.add(fabricText);
+        
+        // Store in our map
+        this.customTexts.set(textId, {
+            fabricObject: fabricText,
+            properties: {
+                text: `Custom Text ${this.textCounter}`,
+                fontFamily: 'Arial',
+                fontSize: 16,
+                fontStyle: 'normal',
+                color: '#000000',
+                textAlign: 'left',
+                top: baseTop + offsetTop,
+                left: left
+            }
+        });
+        
+        // Add to UI list
+        this.addTextToList(textId, `Custom Text ${this.textCounter}`);
+        
+        // Select the new text
+        this.selectCustomText(textId);
+        
+        this.canvas.renderAll();
+    }
+
+    addTextToList(textId, textContent) {
+        const listContainer = document.getElementById('customTextList');
+        const textItem = document.createElement('div');
+        textItem.className = 'custom-text-item';
+        textItem.dataset.textId = textId;
+        textItem.innerHTML = `
+            <span class="text-preview">${textContent.substring(0, 20)}${textContent.length > 20 ? '...' : ''}</span>
+            <span class="text-number">#${this.textCounter}</span>
+        `;
+        
+        listContainer.appendChild(textItem);
+    }
+
+    selectCustomText(textId) {
+        // Remove active class from all items
+        document.querySelectorAll('.custom-text-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Add active class to selected item
+        const selectedItem = document.querySelector(`[data-text-id="${textId}"]`);
+        if (selectedItem) {
+            selectedItem.classList.add('active');
+        }
+        
+        // Set as active
+        this.activeTextId = textId;
+        
+        // Show controls
+        const controls = document.getElementById('customTextControls');
+        controls.style.display = 'block';
+        
+        // Load text properties into controls
+        this.loadTextProperties(textId);
+        
+        // Select the fabric object on canvas
+        const textData = this.customTexts.get(textId);
+        if (textData) {
+            this.canvas.setActiveObject(textData.fabricObject);
+            this.canvas.renderAll();
+        }
+    }
+
+    loadTextProperties(textId) {
+        const textData = this.customTexts.get(textId);
+        if (!textData) return;
+        
+        const props = textData.properties;
+        
+        // Load into controls
+        document.getElementById('customTextArea').value = props.text;
+        document.getElementById('customTextFont-family').value = props.fontFamily;
+        document.getElementById('customTextFont-style').value = props.fontStyle;
+        document.getElementById('customTextFontSize').value = props.fontSize;
+        document.getElementById('customTextColor').value = props.color;
+        
+        // Update alignment icons
+        document.querySelectorAll('.alignment-icon').forEach(icon => {
+            icon.classList.remove('selected');
+            if (icon.dataset.align === props.textAlign) {
+                icon.classList.add('selected');
+            }
+        });
+    }
+
+    updateActiveTextContent(newText) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            textData.fabricObject.set('text', newText || 'Your Custom Text');
+            textData.properties.text = newText || 'Your Custom Text';
+            this.canvas.renderAll();
+            
+            // Update list item preview
+            this.updateListItemPreview(this.activeTextId, newText);
+        }
+    }
+
+    updateActiveFontFamily(fontFamily) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            textData.fabricObject.set('fontFamily', fontFamily);
+            textData.properties.fontFamily = fontFamily;
+            this.canvas.renderAll();
+        }
+    }
+
+    updateActiveFontStyle(fontStyle) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            let fontWeight = 'normal';
+            let fontStyleValue = 'normal';
+            let underline = false;
+
+            if (fontStyle.includes('bold')) {
+                fontWeight = 'bold';
+            }
+            if (fontStyle.includes('italic')) {
+                fontStyleValue = 'italic';
+            }
+            if (fontStyle === 'underline') {
+                underline = true;
+            }
+
+            textData.fabricObject.set({
+                fontWeight: fontWeight,
+                fontStyle: fontStyleValue,
+                underline: underline
+            });
+            
+            textData.properties.fontStyle = fontStyle;
+            this.canvas.renderAll();
+        }
+    }
+
+    updateActiveFontSize(fontSize) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            textData.fabricObject.set('fontSize', fontSize);
+            textData.properties.fontSize = fontSize;
+            this.canvas.renderAll();
+        }
+    }
+
+    updateActiveColor(color) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            textData.fabricObject.set('fill', color);
+            textData.properties.color = color;
+            this.canvas.renderAll();
+        }
+    }
+
+    updateAlignment(alignment) {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            textData.fabricObject.set('textAlign', alignment);
+            textData.properties.textAlign = alignment;
+            this.canvas.renderAll();
+            
+            // Update visual selection
+            document.querySelectorAll('.alignment-icon').forEach(icon => {
+                icon.classList.remove('selected');
+            });
+            document.querySelector(`[data-align="${alignment}"]`).classList.add('selected');
+        }
+    }
+
+    updateListItemPreview(textId, newText) {
+        const listItem = document.querySelector(`[data-text-id="${textId}"]`);
+        if (listItem) {
+            const preview = listItem.querySelector('.text-preview');
+            const displayText = newText || 'Your Custom Text';
+            preview.textContent = displayText.substring(0, 20) + (displayText.length > 20 ? '...' : '');
+        }
+    }
+
+    deleteActiveCustomText() {
+        if (!this.activeTextId) return;
+        
+        const textData = this.customTexts.get(this.activeTextId);
+        if (textData) {
+            // Remove from canvas
+            this.canvas.remove(textData.fabricObject);
+            
+            // Remove from our map
+            this.customTexts.delete(this.activeTextId);
+            
+            // Remove from UI list
+            const listItem = document.querySelector(`[data-text-id="${this.activeTextId}"]`);
+            if (listItem) {
+                listItem.remove();
+            }
+            
+            // Hide controls and clear active
+            document.getElementById('customTextControls').style.display = 'none';
+            this.activeTextId = null;
+            
+            this.canvas.renderAll();
+        }
+    }
+
+    // Method to get all custom text objects for export/save
+    getAllCustomTexts() {
+        return Array.from(this.customTexts.values()).map(textData => ({
+            fabricObject: textData.fabricObject,
+            properties: textData.properties
+        }));
+    }
+
+    // Method to clear all custom texts
+    clearAllCustomTexts() {
+        this.customTexts.forEach((textData, textId) => {
+            this.canvas.remove(textData.fabricObject);
+        });
+        this.customTexts.clear();
+        document.getElementById('customTextList').innerHTML = '';
+        document.getElementById('customTextControls').style.display = 'none';
+        this.activeTextId = null;
+        this.textCounter = 0;
+        this.canvas.renderAll();
+    }
+}
+
+// CSS for custom text styling (add this to your CSS file)
+const customTextCSS = `
+.add-custom-text-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.add-custom-text-btn:hover {
+    background-color: #0056b3;
+}
+
+.custom-text-list {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.custom-text-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.custom-text-item:hover {
+    background-color: #e9ecef;
+}
+
+.custom-text-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.text-preview {
+    flex: 1;
+    font-size: 14px;
+}
+
+.text-number {
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0.7;
+}
+
+.custom-text-controls {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+}
+
+.custom-text-controls textarea,
+.custom-text-controls select,
+.custom-text-controls input {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.custom-text-actions {
+    margin-top: 15px;
+}
+
+.delete-custom-text-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.delete-custom-text-btn:hover {
+    background-color: #c82333;
+}
+
+.alignment-icon.selected {
+    background-color: #007bff;
+    border-radius: 3px;
+}
+`;
+
+// Add the CSS to the page
+const styleSheet = document.createElement('style');
+styleSheet.textContent = customTextCSS;
+document.head.appendChild(styleSheet);
+
+// Initialize the custom text manager when the page loads
+let customTextManager;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for canvas to be available
+    if (typeof canvas !== 'undefined') {
+        customTextManager = new CustomTextManager(canvas);
+    } else {
+        // Retry after a short delay if canvas is not ready
+        setTimeout(() => {
+            if (typeof canvas !== 'undefined') {
+                customTextManager = new CustomTextManager(canvas);
+            }
+        }, 1000);
+    }
+});

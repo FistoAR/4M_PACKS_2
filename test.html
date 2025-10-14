@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model‑Viewer + Export Modified GLB</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@1.9.0/dist/model-viewer.js"></script>
+  <script type="module">
+   import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js';
+  import { GLTFExporter } from 'https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/exporters/GLTFExporter.js';
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const modelViewer = document.querySelector('#model');
+      const fileInput = document.querySelector('#file-input');
+      const btnUpload = document.getElementById('upload-btn');
+      const btnDownload = document.getElementById('download-btn');
+      let appliedTexture = null;
+
+      btnUpload.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file || !file.type.startsWith('image/')) {
+          alert('Please upload an image file.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const base64 = reader.result;
+          await applyTextureOnModelViewer(base64);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      async function applyTextureOnModelViewer(base64Image) {
+        await modelViewer.whenLoaded();
+        const materials = modelViewer.model.materials;
+        const labelMat = materials.find(m => m.name.toLowerCase().includes('texture_area'));
+        if (!labelMat) {
+          console.warn("⚠ No 'texture_area' material found");
+          return;
+        }
+        appliedTexture = await modelViewer.createTexture(base64Image);
+        labelMat.pbrMetallicRoughness.baseColorTexture.setTexture(appliedTexture);
+        modelViewer.requestUpdate();
+      }
+
+      btnDownload.addEventListener('click', async () => {
+        await modelViewer.whenLoaded();
+        exportFromModelViewer();
+      });
+
+      function exportFromModelViewer() {
+        const exporter = new GLTFExporter();
+        // modelViewer.model is the THREE scene or object
+        const modelScene = modelViewer.model;
+
+        exporter.parse(
+          modelScene,
+          (gltf) => {
+            let output, mimeType;
+            if (gltf instanceof ArrayBuffer) {
+              output = gltf;
+              mimeType = 'application/octet-stream';
+            } else {
+              const json = JSON.stringify(gltf, null, 2);
+              output = new TextEncoder().encode(json);
+              mimeType = 'application/json';
+            }
+            const blob = new Blob([output], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'modified_model.glb';
+            link.click();
+            URL.revokeObjectURL(url);
+          },
+          (error) => {
+            console.error('Error exporting:', error);
+          },
+          { binary: true, embedImages: true }
+        );
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      background-color: #f5f5f5;
+    }
+    #app {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Model‑Viewer + Export Modified GLB</h1>
+    <model-viewer id="model" src="./assets/glb/round/120ml_round.glb"
+                  alt="3D model" shadow-intensity="1" camera-controls auto-rotate>
+    </model-viewer>
+    <button id="upload-btn">Upload Texture</button>
+    <button id="download-btn">Download Modified GLB</button>
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+  </div>
+</body>
+</html>

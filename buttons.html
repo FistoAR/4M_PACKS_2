@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Buttons Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .button-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .button-label {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        /* 1. Pulse Glow */
+        .pulse-glow {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(102, 126, 234, 1);
+                transform: scale(1.05);
+            }
+        }
+
+        /* 2. Gradient Shift */
+        .gradient-shift {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+            background-size: 300% 300%;
+            color: white;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 3. Bounce */
+        .bounce {
+            background: #f39c12;
+            color: white;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* 4. Rotate Border */
+        .rotate-border {
+            background: white;
+            color: #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rotate-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            border-radius: 8px;
+            z-index: -1;
+            animation: rotateBorder 3s linear infinite;
+            background-size: 400%;
+        }
+
+        @keyframes rotateBorder {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 400% 0%; }
+        }
+
+        /* 5. Shake */
+        .shake {
+            background: #e74c3c;
+            color: white;
+            animation: shake 2s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* 6. Neon Flicker */
+        .neon-flicker {
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            animation: neonFlicker 1.5s infinite alternate;
+        }
+
+        @keyframes neonFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00;
+                box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                box-shadow: none;
+            }
+        }
+
+        /* 7. Float */
+        .float {
+            background: #3498db;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* 8. Spin */
+        .spin {
+            background: #9b59b6;
+            color: white;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 9. Heartbeat */
+        .heartbeat {
+            background: #e91e63;
+            color: white;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.1); }
+            20%, 40% { transform: scale(1); }
+        }
+
+        /* 10. Slide Glow */
+        .slide-glow {
+            background: #16a085;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: slideGlow 2s infinite;
+        }
+
+        @keyframes slideGlow {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* 11. Wobble */
+        .wobble {
+            background: #f39c12;
+            color: white;
+            animation: wobble 2s infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        /* 12. Zoom Pulse */
+        .zoom-pulse {
+            background: #27ae60;
+            color: white;
+            animation: zoomPulse 2s infinite;
+        }
+
+        @keyframes zoomPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.8; }
+        }
+
+        /* 13. Rainbow Wave */
+        .rainbow-wave {
+            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet, red);
+            background-size: 200% 100%;
+            color: white;
+            animation: rainbowWave 3s linear infinite;
+            font-weight: 700;
+        }
+
+        @keyframes rainbowWave {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        /* 14. Flip */
+        .flip {
+            background: #c0392b;
+            color: white;
+            animation: flip 3s infinite;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes flip {
+            0%, 100% { transform: rotateY(0deg); }
+            50% { transform: rotateY(180deg); }
+        }
+
+        /* 15. Shadow Expand */
+        .shadow-expand {
+            background: #2c3e50;
+            color: white;
+            animation: shadowExpand 2s infinite;
+        }
+
+        @keyframes shadowExpand {
+            0%, 100% { 
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+            50% { 
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+                transform: translateY(-5px);
+            }
+        }
+
+        /* 16. Glow Borders */
+        .glow-borders {
+            background: #34495e;
+            color: white;
+            border: 2px solid #3498db;
+            animation: glowBorders 2s infinite;
+        }
+
+        @keyframes glowBorders {
+            0%, 100% {
+                border-color: #3498db;
+                box-shadow: 0 0 10px #3498db;
+            }
+            50% {
+                border-color: #e74c3c;
+                box-shadow: 0 0 25px #e74c3c;
+            }
+        }
+
+        /* 17. Jello */
+        .jello {
+            background: #1abc9c;
+            color: white;
+            animation: jello 2s infinite;
+        }
+
+        @keyframes jello {
+            0%, 100% { transform: skewX(0deg) skewY(0deg); }
+            30% { transform: skewX(12.5deg) skewY(12.5deg); }
+            40% { transform: skewX(-10deg) skewY(-10deg); }
+            50% { transform: skewX(6deg) skewY(6deg); }
+            60% { transform: skewX(-3deg) skewY(-3deg); }
+            70% { transform: skewX(1.5deg) skewY(1.5deg); }
+        }
+
+        /* 18. Ripple */
+        .ripple {
+            background: #8e44ad;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before, .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            animation: ripple 3s infinite;
+        }
+
+        .ripple::after {
+            animation-delay: 1.5s;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Animated Buttons Collection</h1>
+    <div class="container">
+        <div class="button-wrapper">
+            <div class="button-label">Pulse Glow</div>
+            <button class="pulse-glow">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Gradient Shift</div>
+            <button class="gradient-shift">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Bounce</div>
+            <button class="bounce">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Rotate Border</div>
+            <button class="rotate-border">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Shake</div>
+            <button class="shake">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Neon Flicker</div>
+            <button class="neon-flicker">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Float</div>
+            <button class="float">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Spin</div>
+            <button class="spin">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Heartbeat</div>
+            <button class="heartbeat">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Slide Glow</div>
+            <button class="slide-glow">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Wobble</div>
+            <button class="wobble">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Zoom Pulse</div>
+            <button class="zoom-pulse">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Rainbow Wave</div>
+            <button class="rainbow-wave">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Flip</div>
+            <button class="flip">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Shadow Expand</div>
+            <button class="shadow-expand">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Glow Borders</div>
+            <button class="glow-borders">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Jello</div>
+            <button class="jello">Click Me</button>
+        </div>
+
+        <div class="button-wrapper">
+            <div class="button-label">Ripple</div>
+            <button class="ripple">Click Me</button>
+        </div>
+    </div>
+</body>
+</html>

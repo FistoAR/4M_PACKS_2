@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4M Packs</title>
+    <link rel="icon" href="./assets/images/images/4M_Packs_Logo.svg">
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .header {
+            /* background: linear-gradient(135deg, #ff6b35, #f7931e); */
+             background-color: #FFB537;
+            height: 67px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 27px;
+            color: white;
+        }
+
+        /* .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        } */
+
+        /* .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6b35;
+            font-weight: bold;
+        } */
+
+        .export-btn {
+            background: #d32f2f;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .export-btn:hover {
+            background: #b71c1c;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 25%;
+            background: white;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
+
+        .categories {
+            /* padding: 10px; */
+        }
+
+        .category-title {
+            /* background: #333; */
+            color: rgb(0, 0, 0);
+            padding: 10px;
+            /* margin-bottom: 10px; */
+            /* border-radius: 4px; */
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .nav-btn {
+            /* background: #f5f5f5; */
+            border: 2px solid #ddd;
+            /* border: none; */
+            /* padding: 8px 12px; */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.active {
+            border-color: #FFB537;
+            background: #fff3f0;
+            color: #FFB537;
+        }
+
+        .nav-btn:hover {
+            background: #eeeeee;
+        }
+
+        .round-container-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            /* background: #666; */
+            color: #FFB537;
+            padding: 8px 10px;
+            font-size: 20px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0 10px;
+        }
+
+        .model-item {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .model-item:hover {
+            border-color: #FFB537;
+        }
+
+        .model-item.selected {
+            border-color: #FFB537;
+            background: #fff3f0;
+        }
+
+        .model-preview {
+            width: 30px;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .model-name {
+            font-size: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .model-specs {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .content-area {
+            flex: 1;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .model-display {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* background: #fafafa; */
+            position: relative;
+        }
+
+        .model-viewer {
+            width: 100%;
+            height: 100%;
+            /* width: 400px;
+            height: 300px; */
+            /* background: white; */
+            border-radius: 8px;
+            /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .model-placeholder {
+            /* width: 250px;
+            height: 200px; */
+            width: 100%;
+            height: 100%;
+            /* background: #f0f0f0; */
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* color: #999; */
+        }
+
+        .model-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            /* background: rgba(255, 255, 255, 0.95); */
+            padding: 10px;
+            /* border-radius: 6px; */
+            /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
+        }
+
+        .model-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #DC2827;
+            margin-bottom: 2px;
+        }
+
+        .model-capacity {
+            font-size: 15px;
+            color: #161515;
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            /* background: rgba(255, 255, 255, 0.9); */
+            padding: 8px;
+            border-radius: 20px;
+            /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
+        }
+
+        .zoom-btn {
+            width: 30px;
+            height: 30px;
+            border: 2px solid black;
+            /* background: #ff6b35; */
+            color: rgb(0, 0, 0);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            /* font-weight: bold; */
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: #e0dbdb;
+            transform: scale(1.1);
+        }
+
+        .patterns-section {
+            width: 250px;
+            background: white;
+            /* border-left: 1px solid #ddd; */
+            padding: 20px;
+        }
+
+        .patterns-title {
+            color: #d32f2f;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pattern-item {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #272626;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pattern-item:hover {
+            border-color: #d32f2f;
+        }
+
+        .pattern-item.selected {
+            border-color: #d32f2f;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .pattern-1 { background: repeating-linear-gradient(45deg, transparent, transparent 2px, #eee 2px, #eee 4px); }
+        .pattern-2 { background: radial-gradient(circle, #f0f0f0 2px, transparent 2px); background-size: 8px 8px; }
+        .pattern-3 { background: linear-gradient(0deg, #f0f0f0 50%, transparent 50%); background-size: 4px 4px; }
+
+        .edit-btn {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 40%;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            
+             margin-right: auto;
+             margin-left: auto;
+        }
+
+        .edit-btn:hover {
+            background: #b71c1c;
+        }
+
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* GLB Import styles */
+        .glb-import {
+            margin: 10px;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .glb-import input[type="file"] {
+            display: none;
+        }
+
+        .glb-import label {
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .glb-import label:hover {
+            color: #ff6b35;
+        }
+
+        /* Pattern Import styles */
+        .pattern-import {
+            margin-top: 15px;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .pattern-import input[type="file"] {
+            display: none;
+        }
+
+        .pattern-import label {
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .pattern-import label:hover {
+            color: #ff6b35;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <!-- <div class="logo-icon">A</div>
+            <span>Frame 132131510</span> -->
+            <img src="./assets/images/images/4M_Packs_Logo.svg" alt="logo" class="w-[71%] ml-[50%]"/>
+        </div>
+        <div class="export-dropdown">
+            <button class="export-btn" onclick="toggleDropdown()">Export</button>
+            <div id="exportDropdown" class="dropdown-content">
+                <a onclick="exportModel('jpg')">JPG</a>
+                <a onclick="exportModel('png')">PNG</a>
+                <a onclick="exportModel('svg')">SVG</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="categories">
+                <div class="category-title">CATEGORIES</div>
+                <div class="nav-buttons">
+                    <button class="nav-btn active" onclick="selectCategory(0)"><img src="./assets/images/images/round_container_red_button.svg"/></button>
+                    <button class="nav-btn" onclick="selectCategory(1)"><img src="./assets/images/images/tamper_evident_rectangular_red_button.svg"/></button>
+                    <button class="nav-btn" onclick="selectCategory(2)"><img src="./assets/images/images/sipper_glass_red_button.svg"/></button>
+                </div>
+
+                <div class="round-container-section">
+                    <div class="section-title" id="categoryTitle">ROUND CONTAINER</div>
+                    <div class="model-grid" id="modelGrid">
+                        <!-- Models will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- GLB Import Section -->
+                <!-- <div class="glb-import">
+                    <input type="file" id="glbImport" accept=".glb,.gltf" multiple onchange="handleGLBImport(event)">
+                    <label for="glbImport">Import GLB Models<br><small>Click to select .glb files</small></label>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="model-display">
+                <div class="model-info">
+                    <div class="model-title" id="modelTitle">4MP-HC-50</div>
+                    <div class="model-capacity" id="modelCapacity">50ml Hinged Container</div>
+                </div>
+                <div class="model-viewer" >
+                    <div class="model-placeholder" id="modelPlaceholder">
+                        <model-viewer 
+                            src="./assets/Final Models/1-50ml Hinged container/1.50ml.glb" 
+                            alt="Container Model" 
+                            auto-rotate 
+                            camera-controls
+                            style="width: 100%; height: 100%;">
+                        </model-viewer>
+                    </div>
+                </div>
+                <!-- <div class="zoom-controls">
+                     <button class="zoom-btn" onclick="zoomIn()">+</button>
+                    <button class="zoom-btn" onclick="zoomOut()">-</button>
+                   
+                </div> -->
+            </div>
+        </div>
+
+        <div class="patterns-section">
+            <div class="patterns-title">Default Patterns</div>
+            <div class="pattern-grid">
+                <div class="pattern-item pattern-1" onclick="selectPattern(0)"></div>
+                <div class="pattern-item pattern-2" onclick="selectPattern(1)"></div>
+                <div class="pattern-item pattern-3" onclick="selectPattern(2)"></div>
+                <!-- <div class="pattern-item" onclick="selectPattern(3)"></div>
+                <div class="pattern-item" onclick="selectPattern(4)"></div>
+                <div class="pattern-item" onclick="selectPattern(5)"></div>
+                <div class="pattern-item" onclick="selectPattern(6)"></div>
+                <div class="pattern-item" onclick="selectPattern(7)"></div>
+                <div class="pattern-item" onclick="selectPattern(8)"></div> -->
+            </div>
+
+            <!-- Pattern Import Section -->
+            <!-- <div class="pattern-import">
+                <input type="file" id="patternImport" accept="image/*" onchange="handlePatternImport(event)">
+                <label for="patternImport">Import Pattern<br><small>Click to select image</small></label>
+            </div> -->
+
+            <button class="edit-btn" onclick="editModel()">Edit</button>
+        </div>
+    </div>
+
+    <script>
+        // Data structure for different categories and their models
+        const categories = [
+            {
+                name: "ROUND CONTAINER",
+                models: [
+                    { name: "4MP-HC-50", capacity: "50ml Hinged Container", src: "./assets/Final Models/1-50ml Hinged container/1.50ml.glb" },
+                    { name: "4MP-R-120", capacity: "120ml Round Container", src: "./assets/Final Models/2-120ml Round Container/2.120ml round.glb" },
+                    { name: "4MP-R-250", capacity: "250ml Round Container", src: "./assets/Final Models/3-250ml Round Container/3.250ml round.glb" },
+                    { name: "4MP-R-500", capacity: "500ml Round Container", src: "./assets/Final Models/4-500ml Round Container/4.500ml round.glb" },
+                    { name: "4MP-R-750", capacity: "750ml Round Container", src: "./assets/Final Models/5-750ml Round Container/5.750ml round.glb" }
+                ]
+            },
+            {
+                name: "TAMPER EVIDENT RECTANGULAR CONTAINER",
+                models: [
+                    { name: "4MP-TER-500", capacity: "500ml Tamper Evident Rectangular Container", src: "./assets/Final Models/6-500ml Tamper Evident Rectangular Container" },
+                    { name: "4MP-TER-750", capacity: "750ml Tamper Evident Rectangular Container", src: "./assets/Final Models/7-750ml Tamper Evident Rectangular Container" },
+                    { name: "4MP-TER-1000", capacity: "1000ml Tamper Evident Rectangular Container", src: "./assets/Final Models/8-1000ml Tamper Evident Rectangular Container" },
+                    // { name: "4MP-HC-125", capacity: "125ml Square Container", src: "models/square/10sq-hc-125.glb" },
+                    // { name: "4MP-HC-150", capacity: "150ml Square Container", src: "models/square/12sq-hc-150.glb" }
+                ]
+            },
+            {
+                name: "SIPPER GLASS",
+                models: [
+                    { name: "4MP-DC-120", capacity: "120ml  Dessert cup", src: "./assets/Final Models/9-120ml  Dessert cup" },
+                    { name: "4MP-G-250", capacity: "250ml Glass", src: "./assets/Final Models/10-250ml Glass" },
+                    { name: "4MP-SG-250", capacity: "250ml Sipper glass", src: "./assets/Final Models/11-250ml Sipper glass" },
+                    { name: "4MP-GF-250", capacity: "250ml Glass with flat lid", src: "./assets/Final Models/12-350ml Glass with flat lid" },
+                    { name: "4MP-G-350", capacity: "350ml Glass", src: "./assets/Final Models/13-350ml Glass" },
+                    { name: "4MP-SG-350", capacity: "350ml Sipper glass", src: "./assets/Final Models/14-350ml Sipper glass_" }
+                ]
+            }
+        ];
+
+        let currentCategory = 0;
+        let selectedModel = 0;
+        let selectedPattern = 0;
+        let zoomLevel = 1;
+
+        // Initialize the page
+        function init() {
+            loadModels();
+            selectModel(0);
+            selectPattern(0);
+        }
+
+        // Load models for current category
+        // function loadModels() {
+        //     const modelGrid = document.getElementById('modelGrid');
+        //     modelGrid.innerHTML = '';
+            
+        //     categories[currentCategory].models.forEach((model, index) => {
+        //         const modelElement = document.createElement('div');
+        //         modelElement.className = `model-item ${index === selectedModel ? 'selected' : ''}`;
+        //         modelElement.onclick = () => selectModel(index);
+                
+        //         modelElement.innerHTML = `
+        //         <div class="section-title">${name}</div>
+        //             <div class="model-preview"></div>
+              
+        //             <div class="model-specs">${model.capacity}</div>
+        //         `;
+                
+        //         modelGrid.appendChild(modelElement);
+        //     });
+        // }
+function loadModels() {
+    const modelGrid = document.getElementById('modelGrid');
+    const categoryTitle = document.getElementById('categoryTitle');
+
+    // Change heading dynamically
+    categoryTitle.textContent = categories[currentCategory].name;
+
+    // Clear previous models
+    modelGrid.innerHTML = '';
+    
+    categories[currentCategory].models.forEach((model, index) => {
+        const modelElement = document.createElement('div');
+        modelElement.className = `model-item ${index === selectedModel ? 'selected' : ''}`;
+        modelElement.onclick = () => selectModel(index);
+        
+        modelElement.innerHTML = `
+            <div class="model-preview">
+                <img src="./images/companynamehere.png"/>
+                </div>
+            
+            <div class="model-specs">${model.capacity}</div>
+        `;
+        
+        modelGrid.appendChild(modelElement);
+    });
+}
+
+        // Select category
+        function selectCategory(categoryIndex) {
+            currentCategory = categoryIndex;
+            console.log("current category: ", currentCategory);
+            selectedModel = 0;
+            
+            // Update active button
+            document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === categoryIndex);
+            });
+            
+            loadModels();
+            selectModel(0);
+        }
+
+        // Select model
+        function selectModel(modelIndex) {
+            selectedModel = modelIndex;
+            const model = categories[currentCategory].models[modelIndex];
+            
+            // Update selected model in grid
+            document.querySelectorAll('.model-item').forEach((item, index) => {
+                item.classList.toggle('selected', index === modelIndex);
+            });
+            
+            // Update model display
+            document.getElementById('modelTitle').textContent = model.name;
+            document.getElementById('modelCapacity').textContent = model.capacity;
+            
+            // Update model viewer (placeholder for actual GLB loading)
+            const placeholder = document.getElementById('modelPlaceholder');
+            placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%;"></model-viewer>`;
+        }
+
+        // Select pattern
+        function selectPattern(patternIndex) {
+            selectedPattern = patternIndex;
+            console.log("Pattern: ", selectedPattern);
+            
+            // Update selected pattern
+            document.querySelectorAll('.pattern-item').forEach((item, index) => {
+                item.classList.toggle('selected', index === patternIndex);
+            });
+            
+            // Apply pattern to current model (this would typically update the GLB texture)
+            console.log(`Applied pattern ${patternIndex} to model ${categories[currentCategory].models[selectedModel].name}`);
+        }
+
+        // Zoom functions
+        function zoomIn() {
+            zoomLevel = Math.min(zoomLevel + 0.2, 3);
+            updateZoom();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(zoomLevel - 0.2, 0.5);
+            updateZoom();
+        }
+
+        function updateZoom() {
+            const modelViewer = document.querySelector('model-viewer');
+            if (modelViewer) {
+                modelViewer.style.transform = `scale(${zoomLevel})`;
+            }
+        }
+
+        // Export functions
+        function toggleDropdown() {
+            document.getElementById("exportDropdown").classList.toggle("show");
+        }
+
+        function exportModel(format) {
+            // Create download link
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            // Fill with white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add model name as text (placeholder)
+            ctx.fillStyle = 'black';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(categories[currentCategory].models[selectedModel].name, canvas.width/2, canvas.height/2);
+            
+            // Convert to desired format and download
+            const link = document.createElement('a');
+            if (format === 'svg') {
+                // Create SVG content
+                const svgContent = `
+                    <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="800" height="600" fill="white"/>
+                        <text x="400" y="300" text-anchor="middle" font-family="Arial" font-size="24">${categories[currentCategory].models[selectedModel].name}</text>
+                    </svg>
+                `;
+                const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                link.href = URL.createObjectURL(blob);
+            } else {
+                canvas.toBlob(function(blob) {
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${categories[currentCategory].models[selectedModel].name}.${format}`;
+                    link.click();
+                }, `image/${format}`);
+                return;
+            }
+            
+            link.download = `${categories[currentCategory].models[selectedModel].name}.${format}`;
+            link.click();
+            
+            document.getElementById("exportDropdown").classList.remove("show");
+        }
+
+        // Edit function
+        // function editModel() {
+        //     window.location.href = 'index.html', '_blank';
+        // }
+        function editModel() {
+            let selectCategoryFinal;
+            if (currentCategory == 0) {
+                selectCategoryFinal = "round";
+            }
+            else if (currentCategory == 1) {
+                selectCategoryFinal = "rectangle";
+            }
+            else {
+                selectCategoryFinal = "round";
+            }
+            sessionStorage.setItem("model_type", selectCategoryFinal);
+    window.open('index.html', '_blank');
+}
+
+    window.addEventListener("message", (event) => {
+        // Optional: verify origin for security
+        // if (event.origin !== "https://yourdomain.com") return;
+
+        const dataURL = event.data;
+
+        if (typeof dataURL === "string" && dataURL.startsWith("data:image/png")) {
+            console.log("Received PNG image from editor");
+
+            // Now use this dataURL as texture for your GLB model
+            // Example: apply it as texture
+            applyTextureToModel(dataURL);
+        }
+    });
+
+    function applyTextureToModel(pngDataURL) {
+        // Your GLB texture logic goes here
+        console.log("Texture image ready:", pngDataURL);
+    }
+
+
+        // GLB Import function
+        function handleGLBImport(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                console.log(`Imported GLB file: ${file.name}`);
+                // Here you would typically process the GLB file and add it to the models array
+            }
+        }
+
+        // Pattern Import function
+        function handlePatternImport(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    console.log(`Imported pattern: ${file.name}`);
+                    // Here you would typically create a new pattern from the imported image
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.export-btn')) {
+                const dropdown = document.getElementById("exportDropdown");
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <!-- Model Viewer Script -->
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4M Packs</title>
+    <link rel="icon" href="./assets/images/images/4M_Packs_Logo.svg">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="stylesheet" href="./main.css?v=5">
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <!-- <div class="logo-icon">A</div>
+            <span>Frame 132131510</span> -->
+            <img src="./assets/images/images/4M_Packs_Logo.svg" alt="logo" class="w-[71%] ml-[50%]" />
+        </div>
+        <div class="export-dropdown flex">
+
+
+            <!-- <button class="edit-btn" onclick="editModel()">Edit</button> -->
+            <!-- <button class="edit-btn" id="editCustomiseButton" onclick="editModel()">Customize your label</button> -->
+
+            <button class="gradient-shift edit-btn" id="editCustomiseButton" onclick="editModel()">Customize your
+                label</button>
+
+            <button class="export-btn" onclick="toggleDropdown()">Export</button>
+            <div id="exportDropdown" class="dropdown-content">
+                <a onclick="downloadGLB()">Download GLB</a>
+                <a onclick="downloadPDF()">Download PDF </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="categories">
+                <div class="category-title">CATEGORIES</div>
+                <div class="nav-buttons">
+                    <button class="nav-btn active" onclick="selectCategory(0)">
+                        <!-- <img src="./assets/images/images/round_container_red_button.svg"/> -->
+                        <div class="red-btn">
+                            <img src="./assets/images/images/icons/circle-icon.svg" />
+                            <p>ROUND <br />CONTAINERS</p>
+                        </div>
+                    </button>
+                    <button class="nav-btn" onclick="selectCategory(1)">
+                        <!-- <img src="./assets/images/images/tamper_evident_rectangular_red_button.svg"/> -->
+                        <div class="red-btn">
+                            <img src="./assets/images/images/icons/tamber-evident-icon.svg" />
+                            <p>TAMPER EVIDENT RECTANGULAR</p>
+                        </div>
+                    </button>
+                    <button class="nav-btn" onclick="selectCategory(2)">
+                        <!-- <img src="./assets/images/images/sipper_glass_red_button.svg"/> -->
+                        <div class="red-btn">
+                            <img src="./assets/images/images/icons/sipper-glass-icon.svg" />
+                            <p>SIPPER <br />GLASS</p>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="round-container-section">
+                    <div class="section-title" id="categoryTitle">ROUND CONTAINER</div>
+                    <div class="model-grid" id="modelGrid">
+                        <!-- Models will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- GLB Import Section -->
+                <!-- <div class="glb-import">
+                    <input type="file" id="glbImport" accept=".glb,.gltf" multiple onchange="handleGLBImport(event)">
+                    <label for="glbImport">Import GLB Models<br><small>Click to select .glb files</small></label>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="content-area">
+
+            <div class="model-display">
+
+                <div class="patterns-section">
+                    <!-- <div class="iml_pattern_toggle_container">
+                        <button class="toggle_button iml_button" id="iml_button" data-show-class="iml-grid">IML</button>
+                        <button class="toggle_button pattern_button active" id="pattern_button" data-show-class="pattern-grid">PATTERN</button>
+                    </div> -->
+                    <div class="patterns-title">Default Screen Printing</div>
+                    <div class="pattern-grid logo_pattern_div">
+                        <!-- image is generated in js - main.js -->
+                        <div class="pattern-item pattern-1" onclick="selectPattern(0)"></div>
+                        <div class="pattern-item pattern-2" onclick="selectPattern(1)"></div>
+                        <div class="pattern-item pattern-3" onclick="selectPattern(2)"></div>
+
+                    </div>
+                    <div class="screen-print-grid" id="screen_print_div_container">
+
+                    </div>
+
+                    <button class="edit-btn" onclick="" id="uploadLogoButton">Upload your logo</button>
+                    <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
+
+                </div>
+
+                <div class="model-viewer">
+                    <div class="model-placeholder" id="modelPlaceholder">
+                        <model-viewer src="./assets/glb/round/50ml_hinged_container.glb" alt="Container Model"
+                            auto-rotate camera-controls style="width: 100%; height: 100%;"
+                            camera-orbit="-1263deg 53.54deg 0.1261m" id="viewer" disable-tap disable-pan>
+                        </model-viewer>
+                    </div>
+                </div>
+
+                <div class="zoom-controls">
+                    <!-- <button class="zoom-btn" onclick="zoomIn()">+</button>
+                    <button class="zoom-btn" onclick="zoomOut()">-</button> -->
+                    <div class="zoom-control">
+                        <button class="zoom-button zoom-in" aria-label="Zoom In" onclick="zoomIn()">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="3"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                        <div class="separator"></div>
+                        <button class="zoom-button zoom-out" aria-label="Zoom Out" onclick="zoomOut()">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="3"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>
+                <div class="model-info">
+                    <div class="model-title" id="modelTitle">4MP-HC-50</div>
+                    <div class="model-capacity" id="modelCapacity">50ml Hinged Container</div>
+                </div>
+
+                <!-- TUB & LID Colour change -->
+                <div class="material-colour-change-div">
+
+                    <div class="dropdown-container">
+                        <select id="materialType">
+                            <option value="lid">Lid</option>
+                            <option value="tub">Tub</option>
+                        </select>
+                    </div>
+
+                    <div class="color-options-container" id="colorOptions">
+                        <!-- Dynamic content will be injected here -->
+                    </div>
+
+                    <!-- Hidden color pickers -->
+                    <input type="color" id="color_picker_lid" name="color_picker_lid">
+                    <input type="color" id="color_picker_tub" name="color_picker_tub">
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div id="colorBox">
+        <!-- default colour set in js - setDefaultColour() -->
+        <label for="colorInput">
+            <span>Background Color:</span>
+            <input type="color" id="colorInput" value="#ffffff" />
+        </label>
+        <div id="hexCode">Hex code: #ffffff</div>
+    </div>
+
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Model Viewer Script -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer@latest/dist/model-viewer.min.js">
+    </script>
+    <script src="https://unpkg.com/three@0.153.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.153.0/examples/js/exporters/GLTFExporter.js"></script>
+
+
+    <script src="./main.js?v=5"></script>
+</body>
+
+</html>

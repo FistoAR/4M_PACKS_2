@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4M Packs</title>
+
+    <!-- ******************************* CSS  *********************************** -->
+    <link rel="stylesheet" href="./assets/css/style.css?v=5">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- ******************************* Font Links  ***************************** -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Quicksand:wght@300..700&display=swap"
+        rel="stylesheet">
+
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@google/model-viewer@latest/dist/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="icon" href="./assets/images/images/4M_Packs_Logo.svg" type="image/x-icon">
+</head>
+
+<body>
+
+
+
+    <div class="main">
+
+        <!-- ************************* Navigation Bar ************************* -->
+
+        <nav class="navbar">
+            <div class="logo">
+                <!-- <img src="./assets/images/popular_logo.webp" alt="popularlogo" title="popularlogo"
+                    loading="eager" width="20%" height="auto"> -->
+                <!-- <img src="./assets/images/rongoli.gif" alt="gif file"> -->
+                <img src="./assets/images/images/4M_Packs_Logo.svg" alt="logo text">
+            </div>
+            <ul class="nav-links">
+                <!-- <li><a href="https://www.popularwater.in/">Home</a></li> -->
+                <!-- <li><button id="exportSVG">Export SVG</button></li>
+                <li><button id="exportPDF" style="display: none;">Export PDF</button></li>
+                <li><button id="exportPNG" style="display: none;">Export PNG</button></li> -->
+                <!-- <li><button id="uploadOwnDesign">Upload Own Design</button></li>
+                <li><button id="export3dModel">View in 3D Model</button></li> -->
+                <li><a id="navBackButton"><button class="apply-btn">Back</button></a></li>
+                <li><a><button id="save-button" class="save-button apply-btn">Export</button></a></li>
+            </ul>
+            <!-- <div class="hamburger" id="hamburger">
+                &#9776;
+            </div> -->
+        </nav>
+        <li><a><button id="apply" class="apply-btn final-apply-button">Apply</button></a></li>
+
+        <!-- ************************* Main Section ************************* -->
+        <div class="mainsection">
+            <div class="leftsection">
+                <h1>Customize Your <span>Label</span></h1>
+
+                <div class="labelsection" id="labelsection">
+
+                    <div class="template1" id="template1">
+                        <div class="header" onclick="toggleDropdown()">
+                            <h2>Template</h2>
+                            <img src="./assets/images/downarrow.png" alt="uparrow" title="uparrow" loading="eager"
+                                width="5%" height="auto" class="uparrow" id="uparrow">
+                        </div>
+                        <div class="dropdown-content1" id="template-container" style="display: none;">
+                            <!-- templates are generated dynamically -->
+
+                        </div>
+                    </div>
+
+
+                    <div class="upload1" id="upload1" role="region" aria-labelledby="upload-header">
+                        <div class="upload-header" id="upload-header" onclick="toggleUploadDropdown()" role="button"
+                            tabindex="0" aria-expanded="false" aria-controls="uploadsec1">
+                            <h2>Upload Your Logo</h2>
+                            <img src="./assets/images/downarrow.png" alt="Toggle Upload Section"
+                                title="Toggle Upload Section" loading="eager" width="5%" height="auto"
+                                class="uparrow" />
+                        </div>
+                        <div class="uploadsec1" id="uploadsec1" role="region" aria-label="Upload section" tabindex="-1">
+                            <input type="file" id="fileInput" style="display:none" accept=".jpg, .jpeg, .png, .pdf"
+                                aria-label="Choose logo file" tabindex="0" />
+                            <div role="button" aria-label="Click to upload logo" tabindex="0" id="uploadArea">
+                                <img src="./assets/images/uploadarrow.svg" alt="Upload logo" title="Upload logo"
+                                    loading="eager" width="5%" height="auto" id="uploadArrow" />
+                                <h3 id="uploadText">Choose a file or drag & drop it here</h3>
+                                <h4>JPEG, PNG, PDF formats, up to 10MB</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="companyname1" id="companyname1">
+                        <div class="companyname-header" onclick="toggleCompanyDropdown()">
+                            <h2>Your Company Name</h2>
+                            <img src="./assets/images/downarrow.png" alt="uparrow" title="uparrow" loading="eager"
+                                width="5%" height="auto" class="uparrow">
+                        </div>
+                        <div class="namesec1">
+                            <textarea name="text" id="textArea" placeholder="Your Company Name"></textarea>
+
+                            <div class="dropdwon-outer-container">
+                                <div class="dropdown">
+                                    <div id="dropdownButton" class="dropdown-button">
+                                        Select Font <span class="dropdown-arrow"><i
+                                                class="fa-solid fa-chevron-down"></i></span>
+                                    </div>
+                                    <div id="dropdownMenu" class="dropdown-menu">
+                                        <div class="dropdown-option" data-font="Nature Beauty"
+                                            data-font-path="./assets/fonts/NatureBeauty.ttf" data-font-no="1">Nature
+                                            Beauty
+                                        </div>
+                                        <div class="dropdown-option" data-font="Datacron"
+                                            data-font-path="./assets/fonts/Datacron.ttf" data-font-no="2">Datacron</div>
+                                        <div class="dropdown-option" data-font="Fonarto"
+                                            data-font-path="./assets/fonts/Fonarto.ttf" data-font-no="3">Fonarto</div>
+                                        <div class="dropdown-option" data-font="Balloon"
+                                            data-font-path="./assets/fonts/balloon.ttf" data-font-no="4">Balloon</div>
+                                        <div class="dropdown-option" data-font="Edo"
+                                            data-font-path="./assets/fonts/edo.ttf" data-font-no="5">Edo</div>
+                                        <div class="dropdown-option" data-font="Jumping Chick"
+                                            data-font-path="./assets/fonts/JumpingChick.ttf" data-font-no="6">Jumping
+                                            Chick
+                                        </div>
+                                        <div class="dropdown-option" data-font="Boogie Boys"
+                                            data-font-path="./assets/fonts/BoogieBoys.otf" data-font-no="7">Boogie Boys
+                                        </div>
+                                        <div class="dropdown-option" data-font="Sunny Spells"
+                                            data-font-path="./assets/fonts/SunnySpells.ttf" data-font-no="8">Sunny
+                                            Spells
+                                        </div>
+                                        <div class="dropdown-option" data-font="Merienda"
+                                            data-font-path="./assets/fonts/Merienda.ttf" data-font-no="9">Merienda</div>
+                                        <div class="dropdown-option" data-font="Good Times"
+                                            data-font-path="./assets/fonts/GoodTimes.ttf" data-font-no="10">Good Times
+                                        </div>
+                                        <div class="dropdown-option" data-font="Scarytale"
+                                            data-font-path="./assets/fonts/Scarytalee.ttf" data-font-no="11">Scarytale
+                                        </div>
+                                        <div class="dropdown-option" data-font="Alro"
+                                            data-font-path="./assets/fonts/alro.ttf" data-font-no="12">Alro</div>
+                                        <div class="dropdown-option" data-font="Blade rounded"
+                                            data-font-path="./assets/fonts/bladeRounded.ttf" data-font-no="13">Blade
+                                            rounded
+                                        </div>
+                                        <div class="dropdown-option" data-font="Airstrike Academy"
+                                            data-font-path="./assets/fonts/airstrike.ttf" data-font-no="14">Airstrike
+                                            Academy</div>
+
+                                        <div class="dropdown-option" data-font="Race Sport"
+                                            data-font-path="./assets/fonts/RaceSport.ttf" data-font-no="15">Race Sport
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="HalvettBlackCond"
+                                            data-font-path="./assets/fonts/HALVKC.TTF" data-font-no="16">
+                                            HalvettBlackCond
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="AGRevueCyr-Roman"
+                                            data-font-path="./assets/fonts/revenue.ttf" data-font-no="17">
+                                            AGRevueCyr-Roman
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="Aestera"
+                                            data-font-path="./assets/fonts/Aestera.ttf" data-font-no="18">Aestera</div>
+
+                                        <div class="dropdown-option" data-font="Agraham"
+                                            data-font-path="./assets/fonts/Agraham.otf" data-font-no="19">Agraham</div>
+
+                                        <div class="dropdown-option" data-font="AL_Nevrada"
+                                            data-font-path="./assets/fonts/AL_Nevrada_PersonalUseOnly.otf"
+                                            data-font-no="20">AL_Nevrada</div>
+
+                                        <div class="dropdown-option" data-font="BalapDemo"
+                                            data-font-path="./assets/fonts/BalapDemoRegular.ttf" data-font-no="21">
+                                            BalapDemo
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="Bangkok"
+                                            data-font-path="./assets/fonts/bangkokb.TTF" data-font-no="22">Bangkok</div>
+
+                                        <div class="dropdown-option" data-font="Basmala"
+                                            data-font-path="./assets/fonts/Basmala.ttf" data-font-no="23">Basmala</div>
+
+                                        <div class="dropdown-option" data-font="Battlesbridge Demo"
+                                            data-font-path="./assets/fonts/BattlesbridgeDemoRegular.ttf"
+                                            data-font-no="24">
+                                            Battlesbridge Demo</div>
+
+                                        <div class="dropdown-option" data-font="Berdano"
+                                            data-font-path="./assets/fonts/Berdano-Regular.otf" data-font-no="25">
+                                            Berdano
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="Catchland"
+                                            data-font-path="./assets/fonts/Catchland_PERSONAL_USE_ONLY.otf"
+                                            data-font-no="26">Catchland</div>
+
+                                        <div class="dropdown-option" data-font="Firlest"
+                                            data-font-path="./assets/fonts/Firlest-Regular.otf" data-font-no="27">
+                                            Firlest
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="Rekalgera"
+                                            data-font-path="./assets/fonts/Rekalgera-Regular.otf" data-font-no="28">
+                                            Rekalgera</div>
+
+                                        <div class="dropdown-option" data-font="Slugs Racer"
+                                            data-font-path="./assets/fonts/slugs-racer.otf" data-font-no="29">Slugs
+                                            Racer
+                                        </div>
+
+                                        <div class="dropdown-option" data-font="The Richland"
+                                            data-font-path="./assets/fonts/the-richland.otf" data-font-no="30">The
+                                            Richland
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="fontSizeDiv">
+                                    <!-- <p>Font size: </p> -->
+                                    <input type="number" id="numberInput1" value="16">
+                                </div>
+                            </div>
+
+
+                            <div id="fontImageContainer" class="image-container" style="display: none;"></div>
+
+                            <select name="Font-family" id="Font-family1" style="display: none;">
+                                <option selected>Select Font</option>
+                                <option value="Nature Beauty">Nature Beauty</option>
+                                <option value="Datacron">Datacron</option>
+                                <option value="Fonarto">Fonarto</option>
+                                <option value="Balloon">Balloon</option>
+                                <option value="Edo">Edo</option>
+                                <option value="Jumping Chick">Jumping Chick</option>
+                                <option value="Boogie Boys">Boogie Boys</option>
+                                <option value="Sunny Spells">Sunny Spells</option>
+                                <option value="Merienda">Merienda</option>
+                                <option value="Good Times">Good Times</option>
+                                <option value="Scarytale">Scarytale</option>
+                                <option value="Alro">Alro</option>
+                                <option value="Blade rounded">Blade rounded</option>
+                                <option value="Airstrike Academy">Airstrike Academy</option>
+                                <option value="Race Sport">Race Sport</option>
+                            </select>
+
+                            <div style="display: none; align-items: center; margin-top: 10px;">
+                                <input id="font-style1" disabled value="Font Size" class="font-size-text">
+
+                            </div>
+
+
+
+                            <div class="alignment-container"
+                                style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
+                                <!-- Alignment Icons -->
+                                <div class="alignment1" style="display: flex; align-items: center; width: 30%;">
+                                    <h4>Position</h4>
+                                    <img src="./assets/images/images/icons/left-icon.svg" alt="lefticon"
+                                        title="lefticon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="left-align">
+                                    <img src="./assets/images/images/icons/center-icon.svg" alt="centericon"
+                                        title="centericon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="center-align">
+                                    <img src="./assets/images/images/icons/right-icon.svg" alt="righticon"
+                                        title="righticon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="right-align">
+                                    <!-- <img src="./assets/images/tidyup.png" alt="tidyupicon" title="tidyupicon"
+                                        loading="eager" width="5%" height="auto" class="alignment-icon hidden-img"
+                                        id="tidyup-align"> -->
+                                </div>
+
+
+                                <!-- Color Picker -->
+                                <div class="flex w-[40%]">
+                                    <label for="color-picker1" class="color-picker-label">
+                                        <img src="./assets/images/color-picker-img.svg" alt="color-circle" class="w-15 "
+                                            style="margin-left: 15px; margin-top: 10px;" />
+                                        <input type="color" id="color-picker1" name="color" value="#83D086"
+                                            style="opacity: 0;">
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="address1" id="address1">
+                        <div class="address-header" onclick="toggleAddressDropdown()">
+                            <h2>Your Address</h2>
+                            <img src="./assets/images/downarrow.png" alt="uparrow" title="uparrow" loading="eager"
+                                width="5%" height="auto" class="uparrow">
+                        </div>
+                        <div class="addresssec1">
+                            <textarea name="text" id="textArea1" placeholder="Type Here"></textarea>
+                            <div class="dropdown-wrapper-container ">
+                                <select name="Font-family" id="addressFont-family1">
+                                    <option selected>Select Font</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Courier New">Courier New</option>
+                                    <option value="Verdana">Verdana</option>
+                                    <option value="Tahoma">Tahoma</option>
+                                    <option value="Trebuchet MS">Trebuchet MS</option>
+                                    <option value="Comic Sans MS">Comic Sans MS</option>
+                                    <option value="Lucida Console">Lucida Console</option>
+                                    <option value="Roboto">Roboto</option>
+                                </select>
+
+                                <div class="fontSizeDiv">
+                                    <input type="number" id="addressnumberInput1" value="16" style="margin-left: 10px;">
+                                </div>
+
+
+                            </div>
+                            <div style="align-items: center; display: none;">
+                                <select id="addressfont-style1">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="italic">Italic</option>
+                                    <option value="underline">Underline</option>
+                                    <option value="bold italic">Bold Italic</option>
+                                </select>
+
+                            </div>
+
+
+                            <div class="addressalignment-container" style="display: flex; align-items: center;">
+
+                                <div class="flex row w-[25%] gap-[5px] ">
+                                    <button class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                        id="address-bold"><img
+                                            src="./assets/images/images/icons/bold-icon.svg" /></button>
+                                    <button class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                        id="address-italic"><img
+                                            src="./assets/images/images/icons/italic-icon.svg" /></button>
+                                    <button class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                        id="address-underline"><img
+                                            src="./assets/images/images/icons/underline-icon.svg" /></button>
+                                </div>
+
+                                <!-- Alignment Icons -->
+                                <div class="addressalignment1" style="display: flex; align-items: center;">
+                                    <h4>Position</h4>
+                                    <img src="./assets/images/images/icons/left-icon.svg" alt="lefticon"
+                                        title="lefticon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="left-align">
+                                    <img src="./assets/images/images/icons/center-icon.svg" alt="centericon"
+                                        title="centericon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="center-align">
+                                    <img src="./assets/images/images/icons/right-icon.svg" alt="righticon"
+                                        title="righticon" loading="eager" width="100%" height="auto"
+                                        class="alignment-icon" id="right-align">
+                                    <!-- <img src="./assets/images/tidyup.png" alt="tidyupicon" title="tidyupicon"
+                                        loading="eager" width="5%" height="auto" class="alignment-icon hidden-img"
+                                        id="tidyup-align"> -->
+                                </div>
+
+                                <!-- Color Picker -->
+                                <div class="flex w-[18%] items-center">
+                                    <!-- Image acts as color picker button -->
+                                    <label for="address-color-picker1" style="cursor: pointer; margin-left: 15px; ">
+                                        <img src="./assets/images/color-picker-img.svg" alt="color-circle"
+                                            class="w-15" />
+                                    </label>
+
+                                    <!-- Hidden color input -->
+                                    <input type="color" id="address-color-picker1" name="color" value="#83D086"
+                                        style="width: 0; height: 0; opacity: 0; position: absolute;" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="customText1" id="customText1">
+                        <div class="customText-header" onclick="customTextManager.toggleCustomTextDropdown()">
+                            <h2>Custom Text</h2>
+                            <img src="./assets/images/downarrow.png" alt="uparrow" title="uparrow" loading="eager"
+                                width="5%" height="auto" class="uparrow">
+                        </div>
+                        <div class="customTextsec1">
+                            <button id="addCustomTextBtn" class="add-custom-text-btn">+ Add Custom Text</button>
+                            <div id="customTextList" class="custom-text-list"></div>
+                            <div id="customTextControls" class="custom-text-controls" style="display: none;">
+                                <textarea id="customTextArea" placeholder="Type your custom text here"></textarea>
+
+                                <div class="dropdown-wrapper-container gap-[15px]">
+                                    <select id="customTextFont-family">
+                                        <option selected>Select Font</option>
+                                        <option value="Arial">Arial</option>
+                                        <option value="Georgia">Georgia</option>
+                                        <option value="Times New Roman">Times New Roman</option>
+                                        <option value="Courier New">Courier New</option>
+                                        <option value="Verdana">Verdana</option>
+                                        <option value="Tahoma">Tahoma</option>
+                                        <option value="Trebuchet MS">Trebuchet MS</option>
+                                        <option value="Comic Sans MS">Comic Sans MS</option>
+                                        <option value="Lucida Console">Lucida Console</option>
+                                        <option value="Roboto">Roboto</option>
+                                    </select>
+
+                                    <div class="fontSizeDiv">
+                                        <input type="number" id="customTextFontSize" value="16" min="8" max="72">
+                                    </div>
+
+                                </div>
+
+                                <select id="customTextFont-style" style="display: none;">
+                                    <option value="normal" selected>Normal</option>
+                                    <option value="bold">Bold</option>
+                                    <option value="italic">Italic</option>
+                                    <option value="underline">Underline</option>
+                                    <option value="bold italic">Bold Italic</option>
+                                </select>
+
+
+                                <div class="customTextalignment-container" style="display: flex; align-items: center; ">
+
+                                    <div class="flex row w-[25%] gap-[5px] ">
+                                        <button
+                                            class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                            id="custom-text-bold"><img
+                                                src="./assets/images/images/icons/bold-icon.svg" /></button>
+                                        <button
+                                            class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                            id="custom-text-italic"><img
+                                                src="./assets/images/images/icons/italic-icon.svg" /></button>
+                                        <button
+                                            class="font-bold w-[50%] cursor-pointer flex items-center justify-center"
+                                            id="custom-text-underline"><img
+                                                src="./assets/images/images/icons/underline-icon.svg" /></button>
+                                    </div>
+
+
+                                    <div class="customTextalignment1" style="display: flex; align-items: center;">
+                                        <h4>Position</h4>
+                                        <img src="./assets/images/images/icons/left-icon.svg" alt="lefticon"
+                                            title="lefticon" loading="eager" width="100%" height="auto"
+                                            class="alignment-icon" data-align="left">
+                                        <img src="./assets/images/images/icons/center-icon.svg" alt="centericon"
+                                            title="centericon" loading="eager" width="100%" height="auto"
+                                            class="alignment-icon" data-align="center">
+                                        <img src="./assets/images/images/icons/right-icon.svg" alt="righticon"
+                                            title="righticon" loading="eager" width="100%" height="auto"
+                                            class="alignment-icon" data-align="right">
+                                        <!-- <img src="./assets/images/tidyup.png" alt="tidyupicon" title="tidyupicon"
+                                        loading="eager" width="5%" height="auto" class="alignment-icon hidden-img"
+                                        id="tidyup-align"> -->
+                                    </div>
+
+
+                                    <label for="customTextColor" class="color-picker-label">
+                                        <img src="./assets/images/color-picker-img.svg" alt="color-circle" class="w-15 "
+                                             />
+                                        <input type="color" id="customTextColor" name="color" value="#b42929ff"
+                                            style=" width: 30%; border: none; position: absolute; opacity: 0; pointer-events: none;">
+                                    </label>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div class="yesno">
+                        <span>Do you want to upload image?</span>
+                        <div class="radio-buttons">
+                            <label class="containerLabel"><input type="radio" name="upload" value="yes"><span>
+                                    Yes</span></label>
+                            <label class="containerLabel"><input type="radio" name="upload" value="no"><span>
+                                    No</span></label>
+                        </div>
+                    </div> -->
+
+                    <div class="upload2" id="upload2" role="region" aria-labelledby="uploadHeader2">
+                        <div class="upload-header2" onclick="multipleImageManager.toggleUploadDropdown()" tabindex="0"
+                            role="button" aria-expanded="false">
+                            <h2>Upload Multiple Images</h2>
+                            <img src="./assets/images/downarrow.png" alt="Toggle dropdown" title="Toggle dropdown"
+                                loading="eager" width="5%" height="auto" class="uparrow2" />
+                        </div>
+                        <div class="uploadsec2" id="uploadsec2" style="display: none;">
+                            <div class="upload-area" id="uploadArea2">
+                                <input type="file" id="fileInput2" style="display: none" accept="image/*"
+                                    aria-label="Select multiple images to upload">
+                                <img src="./assets/images/uploadarrow.svg" alt="Open file manager"
+                                    title="Open file manager" loading="eager" width="5%" height="auto"
+                                    id="uploadArrow2" />
+                                <h3 id="uploadText2">Choose multiple images or drag & drop them here</h3>
+                                <h4>JPEG, PNG formats, up to 10MB each</h4>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- <div class="yesno" style="margin-top: 5%;">
+                        <span>Do you want to upload a QR image?</span>
+                        <div class="radio-buttons">
+                            <label class="containerLabel"><input type="radio" name="uploadQR" value="yes"><span>
+                                    Yes</span></label>
+                            <label class="containerLabel"><input type="radio" name="uploadQR" value="no"><span>
+                                    No</span></label>
+                        </div>
+                    </div> -->
+
+                    <div class="upload3" id="upload3" role="region" aria-labelledby="uploadHeader3"
+                        style="display: none;">
+                        <div class="upload-header3" id="uploadHeader3" tabindex="0" role="button" aria-expanded="false"
+                            aria-controls="uploadsec3" aria-label="Upload your qr section">
+                            <h2>Upload Your QR Image</h2>
+                            <img src="./assets/images/downarrow.png" alt="Toggle dropdown" title="Toggle dropdown"
+                                loading="eager" width="5%" height="auto" class="uparrow3" />
+                        </div>
+                        <div class="uploadsec3" id="uploadsec3" style="display: none;" role="region" aria-live="polite"
+                            aria-hidden="true">
+                            <input type="file" id="fileInput3" style="display: none" aria-label="Select file to upload">
+                            <img src="./assets/images/uploadarrow.png" alt="Open file manager" title="Open file manager"
+                                loading="eager" width="5%" height="auto" id="uploadArrow3" role="button"
+                                aria-label="Click or press Enter/Space to open file manager" />
+                            <h3 id="uploadText3">Choose a file or drag & drop it here</h3>
+                            <h4>JPEG, PNG, PDF formats, up to 10MB</h4>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="rightsection" style="position: relative;">
+                <!-- Template Image -->
+                <a style="display: none;">
+                    <img id="right-section-image" src="./assets/images/images/default_round.png"
+                        alt="template1" title="template1" loading="eager" width="5%" height="auto">
+                </a>
+
+                <!-- Logo Image Section -->
+                <img class="logo-upload" id="logoImage" src="assets/images/yourLogoWhite.png" alt="Logo"
+                    style="display: none;">
+
+                <!-- Text Section -->
+                <div id="text-section" class="text-section"
+                    style="position: absolute; top: 40%; left: 50%; transform: translateX(-50%); text-align: center; z-index: 999; color: white; display: none;">
+                    <span id="companySection">Your text here</span>
+                </div>
+
+                <!-- Custom Image Section -->
+
+                <!-- <img id="custom-image" class="custom-image" src="assets/images/promotionhere.png" alt="Custom Image"> -->
+
+                <div id="absolutePositioner" style="display: none;">
+                    <div id="custom-image-container" class="custom-image-container" style="position: relative;">
+                        <img id="custom-image" class="custom-image" src="assets/images/promotionhere.png"
+                            alt="Custom Image">
+                        <!-- Resize Handles will be positioned around this container -->
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div id="address-section" class="address-section"
+                    style="position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); text-align: center; display: none;">
+                    <span id="addressSection">Your address here</span>
+                </div>
+
+                <canvas id="canvas" class="canvas">
+                </canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 3d model popup -->
+
+    <div id="modelViewerModal" class="modal">
+        <div class="modal-content">
+            <img src="./assets/images/360-degrees.gif" alt="" class="model-360-img">
+            <span class="close">&times;</span>
+            <div class="flex-container">
+                <div class="button-container">
+                    <p class="button-header">Models</p>
+                    <button class="bottleChangeButton active" model-src="./assets/glb/bottleModel3.gltf"><img
+                            src="./assets/images/modelImages/3d_button_1.webp" alt="bottle image" id="bottle1"
+                            data-color="#bc966b"></button>
+                    <button class="bottleChangeButton" model-src="./assets/glb/bottleModel2.gltf"><img
+                            src="./assets/images/modelImages/3d_button_2.webp" alt="bottle image" id="bottle2"
+                            data-color="#81322d"></button>
+                    <button class="bottleChangeButton" model-src="./assets/glb/bottleModel4.gltf"><img
+                            src="./assets/images/modelImages/3d_button_3.webp" alt="bottle image" id="bottle3"
+                            data-color="#ec4f96"></button>
+                    <button class="bottleChangeButton" model-src="./assets/glb/bottleModel1.gltf"><img
+                            src="./assets/images/modelImages/3d_button_4.webp" alt="bottle image" id="bottle4"
+                            data-color="#804498"></button>
+                    <div class="input-container" style="display: none;">
+                        <label for="topColorChanger">Tap Color:</label>
+                        <input type="color" name="colorChanger" id="topColorChanger">
+                    </div>
+
+                    <p class="button-header">Background</p>
+                    <div class="bg-images-container">
+                        <button class="backgroundChangeButtons active"><img
+                                src="./assets/images/modelImages/greenBackground.webp" alt="bottle image" id="bgImage1"
+                                custom-class="normalStone"
+                                stone-image="./assets/images/modelImages/stone_image.webp"></button>
+                        <button class="backgroundChangeButtons"><img
+                                src="./assets/images/modelImages/blueBackground.webp" alt="bottle image" id="bgImage2"
+                                custom-class="normalStone"
+                                stone-image="./assets/images/modelImages/stone_image.webp"></button>
+                        <button class="backgroundChangeButtons"><img src="./assets/images/modelImages/bgBrown.webp"
+                                alt="bottle image" id="bgImage3" custom-class="brownStone"
+                                stone-image="./assets/images/modelImages/brown_stone_img.webp"></button>
+                        <button class="backgroundChangeButtons"><img src="./assets/images/modelImages/bgGreen2.webp"
+                                alt="bottle image" id="bgImage4" custom-class="greenStone"
+                                stone-image="./assets/images/modelImages/stoneGrass.webp"></button>
+                        <button class="backgroundChangeButtons"><img src="./assets/images/modelImages/orangeBg.webp"
+                                alt="bottle image" id="bgImage5" custom-class="normalStone"
+                                stone-image="./assets/images/modelImages/stone_image.webp"></button>
+                    </div>
+                </div>
+
+
+
+                <model-viewer id="modelViewer" src="" alt="3D Model" camera-controls disable-tap
+                    min-camera-orbit="auto 78deg auto" max-camera-orbit="auto 78deg auto"
+                    camera-orbit="-728.5deg 79.29deg 0.5735m" field-of-view="30deg" disable-ar
+                    exposure="1.5"></model-viewer>
+
+                <div id="loadingSpinner" class="spinner"></div>
+            </div>
+            <div class="center-img-opactity">
+                <img src="./assets/images/modelImages/3d_model_bg_opacity.webp" alt="3d opacity logo">
+            </div>
+            <div class="left-img-bg">
+                <img src="./assets/images/modelImages/3d_model_bg_1.webp" alt="left image">
+            </div>
+            <div class="stone-img-bg">
+                <img src="./assets/images/modelImages/stone_image.webp" alt="stone image">
+            </div>
+            <div class="right-img-bg">
+                <img src="./assets/images/modelImages/3d_model_bg_2.webp" alt="left image">
+            </div>
+            <div class="model-export-button-container">
+                <button id="exportPDFButton" class="modal-button"> Export PDF <img src="./assets/images/pdf-file.png"
+                        alt=""></button>
+                <button id="exportGLBButton" class="modal-button glb-button"> Export 3D Model <img
+                        src="./assets/images/cube.png" alt=""></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="alert-container"></div>
+
+    <div id="customAlert" class="custom-alert" style="display: none;">
+        <div class="alert-box">
+            <span id="alertMessage"></span>
+            <button id="closeAlertButton">x</button>
+        </div>
+    </div>
+
+    <div class="pdf-modal">
+        <div class="pdf-modal-content">
+            <p>Please wait, While we export your PDF...</p>
+        </div>
+    </div>
+
+
+    <div class="signup-form">
+        <div class="signup-contents">
+            <i class="fa-solid fa-xmark close-button-signup"></i>
+
+            <form id="signupForm">
+                <h2>Enter Details</h2>
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">Mobile</label>
+                    <input type="tel" id="mobile" name="mobile" pattern="^[0-9]{10}$" required maxlength="10" />
+                    <small>Enter 10-digit mobile number</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email ID</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+
+
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <p id="toastMessage">This is a toast message!</p>
+    </div>
+
+    <div class="pdf-modal-popup" style="display: none;">
+        <div class="modal-content">
+            <p>Before exporting the PDF, place the bottle in the position you want.</p>
+            <button id="confirmBtn">OK</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+    <!-- ************************* Script Section ************************* -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"
+        integrity="sha512-HkRNCiaZYxQAkHpLFYI90ObSzL0vaIXL8Xe3bM51vhdYI79RDFMLTAsmVH1xVPREmTlUWexgrQMk+c3RBTsLGw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
+    <script src="https://htmlsvg.netlify.app/scripts/htmlsvg.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./new.js?v=5"></script>
+    <script src="./assets/js/image.js?v=5"></script>
+    <script src="./assets/js/script.js?v=5"></script>
+    <script src="./assets/js/script2.js?v=5"></script>
+
+
+    <script>
+
+    </script>
+</body>
+
+</html>
