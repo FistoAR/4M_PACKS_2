@@ -41,7 +41,7 @@ channel.onmessage = (event) => {
 
 document.addEventListener("visibilitychange", function () {
   if (document.visibilityState === "visible") {
-    location.reload();
+    // location.reload();
   }
 });
 
@@ -98,46 +98,47 @@ function createTemplates(chosenModel) {
 
   // 👇 Handle file selection
   fileInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const dataUrl = e.target.result;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const dataUrl = e.target.result;
 
-    const img = new Image();
-    img.onload = function () {
-      const requiredWidth =  (chosenModel == 'round') ? 2908 : 1926;   // ✅ Set your required width
-      const requiredHeight = (chosenModel == 'round') ? 448 : 1289;;  // ✅ Set your required height
+      const img = new Image();
+      img.onload = function () {
+        const requiredWidth = chosenModel == "round" ? 2908 : 1926; // ✅ Set your required width
+        const requiredHeight = chosenModel == "round" ? 448 : 1289; // ✅ Set your required height
 
-      if (img.width !== requiredWidth || img.height !== requiredHeight) {
-        alert(`Image must be exactly ${requiredWidth}x${requiredHeight} pixels.`);
-        return;
-      }
+        if (img.width !== requiredWidth || img.height !== requiredHeight) {
+          alert(
+            `Image must be exactly ${requiredWidth}x${requiredHeight} pixels.`
+          );
+          return;
+        }
 
-      // ✅ Passed validation — proceed with your logic
-      document
-        .querySelectorAll(".dropdown-content1 img")
-        .forEach((btn) => btn.classList.remove("selected"));
+        // ✅ Passed validation — proceed with your logic
+        document
+          .querySelectorAll(".dropdown-content1 img")
+          .forEach((btn) => btn.classList.remove("selected"));
 
-      customButton.classList.add("selected");
+        customButton.classList.add("selected");
 
-      setBackgroundImage(dataUrl, true);
+        setBackgroundImage(dataUrl, true);
 
-      const theme = customButton.getAttribute("data-theme") || "black";
-      doTemplateChangeWithCustomText(theme);
+        const theme = customButton.getAttribute("data-theme") || "black";
+        doTemplateChangeWithCustomText(theme);
+      };
+
+      img.onerror = function () {
+        alert("Failed to load the image.");
+      };
+
+      img.src = dataUrl;
     };
 
-    img.onerror = function () {
-      alert("Failed to load the image.");
-    };
-
-    img.src = dataUrl;
-  };
-
-  reader.readAsDataURL(file);
-});
-
+    reader.readAsDataURL(file);
+  });
 }
 
 // function createTemplates(chosenModel) {
@@ -1154,91 +1155,132 @@ fontSizeInput.addEventListener("input", function () {
 
 // ******************************************** Logo code starts here ********************************************
 function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
+  console.log("🟡 uploadLogo called with:", src);
+
   fetch(src)
     .then((response) => response.blob())
     .then((blob) => {
       const reader = new FileReader();
+
       reader.onloadend = function () {
         const base64Image = reader.result;
+        console.log(
+          "📦 Image loaded into base64, creating offscreen canvas..."
+        );
 
-        // Check if an object with class 'logo' already exists
-        const existingLogo = canvas
-          .getObjects()
-          .find((obj) => obj.className === "logo");
+        // Create offscreen canvas
+        const tempCanvas = document.createElement("canvas");
+        const ctx = tempCanvas.getContext("2d");
+        maxWidth = 100;
+        maxHeight = 100;
+        tempCanvas.width = maxWidth;
+        tempCanvas.height = maxHeight;
 
-        if (existingLogo) {
-          // If the logo already exists, update its source image
-          fabric.Image.fromURL(base64Image, function (img) {
-            // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
-            const imgWidth = img.width;
-            const imgHeight = img.height;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
 
-            let scaleX = 1;
-            let scaleY = 1;
+        img.onload = function () {
+          console.log(
+            "✅ Original image loaded. Size:",
+            img.width,
+            "x",
+            img.height
+          );
 
-            if (imgWidth > maxWidth || imgHeight > maxHeight) {
-              const widthRatio = maxWidth / imgWidth;
-              const heightRatio = maxHeight / imgHeight;
-              const scaleRatio = Math.min(widthRatio, heightRatio); // Maintain aspect ratio
+          const imgWidth = img.width;
+          const imgHeight = img.height;
 
-              scaleX = scaleY = scaleRatio;
-            }
-            const leftPos = (canvas.width - img.width * scaleX) / 2;
-            console.log(`Left position update: ${leftPos}`);
-            // Update the existing logo's image source
-            existingLogo.setElement(img.getElement());
-            existingLogo.set({
-              left: leftPos, // Set default position (can be updated)
-              top: 45, // Set default position (can be updated)
-              scaleX: scaleX, // Adjusted scale
-              scaleY: scaleY, // Adjusted scale
-            });
+          if (imgWidth === 0 || imgHeight === 0) {
+            console.warn("⚠️ Image dimensions invalid.");
+            return;
+          }
 
-            // Re-render the canvas
-            canvas.renderAll();
-          });
-        } else {
-          // If the logo doesn't exist, create a new one
-          fabric.Image.fromURL(base64Image, function (img) {
-            // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
-            const imgWidth = img.width;
-            const imgHeight = img.height;
+          // Compute scale ratio
+          const widthRatio = maxWidth / imgWidth;
+          const heightRatio = maxHeight / imgHeight;
+          const scaleRatio = Math.min(widthRatio, heightRatio);
 
-            let scaleX = 1;
-            let scaleY = 1;
-            const leftPos = (canvas.width - img.width * scaleX) / 2;
-            console.log(`Left position: ${leftPos}`);
+          const scaledWidth = imgWidth * scaleRatio;
+          const scaledHeight = imgHeight * scaleRatio;
+          const offsetX = (maxWidth - scaledWidth) / 2;
+          const offsetY = (maxHeight - scaledHeight) / 2;
 
-            if (imgWidth > maxWidth || imgHeight > maxHeight) {
-              const widthRatio = maxWidth / imgWidth;
-              const heightRatio = maxHeight / imgHeight;
-              const scaleRatio = Math.min(widthRatio, heightRatio); // Maintain aspect ratio
+          console.log(
+            `📏 ScaleRatio: ${scaleRatio.toFixed(
+              3
+            )} | ScaledSize: ${scaledWidth.toFixed(1)}x${scaledHeight.toFixed(
+              1
+            )} | Offset: (${offsetX.toFixed(1)}, ${offsetY.toFixed(1)})`
+          );
 
-              scaleX = scaleY = scaleRatio;
-            }
+          ctx.clearRect(0, 0, maxWidth, maxHeight);
+          ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
 
-            img.set({
-              left: leftPos,
-              top: 45,
-              scaleX: scaleX, // Adjusted scale
-              scaleY: scaleY, // Adjusted scale
-              hasControls: true,
-              hasBorders: true,
-              className: "logo",
-            });
+          const processedDataURL = tempCanvas.toDataURL("image/png");
 
-            // Add the new image to the canvas
-            canvas.add(img);
-            canvas.renderAll();
-          });
-        }
+          // Fabric will now load the processed image
+          fabric.Image.fromURL(
+            processedDataURL,
+            function (finalImg) {
+              console.log(
+                "🧩 Fabric image created:",
+                finalImg.width,
+                "x",
+                finalImg.height
+              );
+
+              const leftPos = 45;
+
+              finalImg.set({
+                left: leftPos,
+                top: 45,
+                hasControls: true,
+                hasBorders: true,
+                selectable: true,
+                evented: true,
+                className: "logo",
+              });
+
+              // Check existing logo
+              // Check existing logo
+              const existingLogo = canvas
+                .getObjects()
+                .find((obj) => obj.className === "logo");
+
+              if (existingLogo) {
+                console.log("🔄 Removing existing logo and adding new one...");
+                canvas.remove(existingLogo);
+              }
+
+              // Always add the fresh logo
+              canvas.add(finalImg);
+              canvas.setActiveObject(finalImg);
+
+              finalImg.bringToFront(); // optional
+              canvas.renderAll();
+
+              console.log(
+                `🎯 New logo added at (${finalImg.left}, ${finalImg.top}) | Draggable: ${finalImg.selectable}`
+              );
+
+              canvas.renderAll();
+              console.log("✅ Canvas render complete");
+            },
+            { crossOrigin: "anonymous" }
+          );
+        };
+
+        img.onerror = function () {
+          console.error("❌ Failed to load image:", src);
+        };
+
+        img.src = base64Image;
       };
 
       isLogoAdded = true;
-
-      // Read the image file as a data URL
       reader.readAsDataURL(blob);
-    });
+    })
+    .catch((err) => console.error("🚨 Upload logo failed:", err));
 }
 
 const fileInputElement = document.getElementById("fileInput");
@@ -2468,38 +2510,6 @@ document
 
 // ************************************************* 3D model related codes ***************************************************************
 
-const modelViewer = document.getElementById("modelViewer");
-modelViewer.addEventListener("load", () => {
-  $("#loadingSpinner").hide();
-});
-
-modelViewer.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-});
-
-modelViewer.addEventListener("pointerdown", (event) => {
-  if (event.button === 2) {
-    // Right mouse button (button === 2)
-    event.preventDefault();
-    // Optionally, add custom behavior if you want the right-click to trigger something else
-  }
-});
-
-modelViewer.addEventListener("mousedown", (e) => {
-  if (e.button === 2) {
-    // Right mouse button
-    e.preventDefault();
-  }
-});
-
-//Optional:  Add mouseup to handle dragging that starts on another modelViewer and ends on this one.
-modelViewer.addEventListener("mouseup", (e) => {
-  if (e.button === 2) {
-    // Right mouse button
-    e.preventDefault();
-  }
-});
-
 function changeTopColor() {
   const colorValue = tapColor;
   // console.log(`Color value inside function: ${colorValue}`);
@@ -2724,315 +2734,6 @@ function executeTask() {
     }
   });
 }
-
-// Close the modal
-closeModal.onclick = function () {
-  // modal.style.top = '-200%';
-  modal.style.visibility = "hidden";
-};
-window.onclick = function (event) {
-  if (event.target == modal) {
-    // modal.style.top = '-200%';
-    modal.style.visibility = "hidden";
-  }
-};
-exportGLBButton.addEventListener("click", async () => {
-  exportGLB();
-});
-
-const modelChangeButtons = document.querySelectorAll(".bottleChangeButton");
-modelChangeButtons.forEach((buttonImg) => {
-  buttonImg.addEventListener("click", function () {
-    $("#loadingSpinner").show();
-    modelChangeButtons.forEach((btn) => btn.classList.remove("active"));
-
-    // Add 'active' class to the clicked button
-    this.classList.add("active");
-    const getModelSrc = buttonImg.getAttribute("model-src");
-    // console.log(getModelSrc);
-    modelViewer.src = getModelSrc;
-    modelViewer.addEventListener("load", () => {
-      if (imageExistingData !== "") {
-        reapplyTexture();
-      }
-      $("#loadingSpinner").hide();
-    });
-  });
-});
-
-let modelCache = {}; // Cache to store the models with applied textures
-
-async function reapplyTexture() {
-  // console.log("reapply triggered.");
-  // console.log(`Tap color in reapply texture: ${tapColor}`);
-
-  if (
-    modelViewer &&
-    modelViewer.model &&
-    modelViewer.model.materials.length > 2
-  ) {
-    // Specify the material name you want to change
-    const targetMaterialName = "Texture";
-
-    // Find the material by name
-    const targetMaterial = modelViewer.model.materials.find(
-      (material) => material.name === targetMaterialName
-    );
-
-    if (targetMaterial) {
-      // Assuming createTexture is a valid method of modelViewer
-      const texture = await modelViewer.createTexture(imageExistingData); // If modelViewer requires a different method, update accordingly
-
-      // Apply the texture to the baseColorTexture of the target material
-      targetMaterial.pbrMetallicRoughness.baseColorTexture.setTexture(texture);
-
-      modelCache[modelViewer.src] = modelViewer.model;
-
-      changeTopColor();
-
-      // closeAlertManually(); // Close any alert or modal if necessary
-    } else {
-      console.error(`Material '${targetMaterialName}' not found.`);
-    }
-  }
-}
-
-const topColorInput = document.getElementById("topColorChanger");
-topColorInput.addEventListener("input", function (e) {
-  changeTopColor2(e.target.value);
-});
-
-function changeTopColor2(colorValue) {
-  // console.log("input value : ", colorValue);
-  if (modelViewer.model.materials.length >= 2) {
-    // Specify the material name you want to change
-    const targetMaterialName = "Top";
-
-    // Find the material by name
-    const targetMaterial = modelViewer.model.materials.find(
-      (material) => material.name === targetMaterialName
-    );
-    targetMaterial.pbrMetallicRoughness.baseColorTexture.setTexture(null);
-
-    if (targetMaterial) {
-      // Change the base color to a new value
-
-      targetMaterial.pbrMetallicRoughness.baseColorTexture.setTexture(null);
-
-      targetMaterial.setAlphaMode("OPAQUE");
-      targetMaterial.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
-      targetMaterial.pbrMetallicRoughness.setBaseColorFactor(colorValue); // White color
-      targetMaterial.pbrMetallicRoughness.setRoughnessFactor(0.5); // Adjust roughness value
-      targetMaterial.pbrMetallicRoughness.setMetallicFactor(0.2);
-    } else {
-      console.error(`Material with name '${targetMaterialName}' not found.`);
-    }
-  }
-}
-
-// ************************************************************************ PDF Output code ***********************************************************************************
-
-const pdfButton = document.getElementById("exportPDFButton");
-const pdfModal = document.querySelector(".pdf-modal");
-const pdfModalPopup = document.querySelector(".pdf-modal-popup");
-const confirmBtn = document.getElementById("confirmBtn");
-const cancelBtn = document.getElementById("cancelBtn");
-pdfButton.addEventListener("click", function () {
-  pdfModalPopup.style.display = "flex";
-
-  // screenshotFunction();
-  // pdfModal.style.visibility = 'visible';
-});
-
-confirmBtn.addEventListener("click", function () {
-  // Proceed with screenshot function if user confirms
-  screenshotFunction();
-  pdfModalPopup.style.display = "none"; // Hide the modal after confirmation
-  pdfModal.style.visibility = "visible";
-});
-
-cancelBtn.addEventListener("click", function () {
-  // Hide the modal without doing anything
-  pdfModalPopup.style.display = "none";
-});
-// function screenshotFunction() {
-//     const secondImageUrl = './assets/images/modelImages/pdf_watermark.webp'
-
-//     if (!modelViewer) {
-//       console.error("ModelViewer element not found");
-//       return;
-//     }
-
-//     // Increase the size of the modelViewer for better clarity
-//     const enlargedWidth = 3500; // Adjust as needed
-//     const enlargedHeight = 3500; // Adjust as needed
-
-//     // Save the original size
-//     const originalWidth = modelViewer.clientWidth;
-//     const originalHeight = modelViewer.clientHeight;
-
-//     // Set the enlarged size
-//     modelViewer.style.width = enlargedWidth + "px";
-//     modelViewer.style.height = enlargedHeight + "px";
-
-//     // Create a link element to trigger the download
-//     const a = document.createElement("a");
-
-//     // After a short delay to allow the modelViewer to render at the new size
-//     setTimeout(() => {
-//       // Capture the modelViewer screenshot
-//       const screenshot = new Image();
-//       screenshot.src = modelViewer.toDataURL({
-//         format: 'png',
-//         multiplier: 10
-//     });
-
-//       // Create an Image element for the background image
-//       const backgroundImage = new Image();
-//       backgroundImage.crossOrigin = 'anonymous'; // Set crossOrigin if images are from different origins
-//       backgroundImage.src = secondImageUrl;
-
-//       // After both images have loaded
-//       Promise.all([
-//         new Promise(resolve => {
-//           screenshot.onload = resolve;
-//         }),
-//         new Promise(resolve => {
-//           backgroundImage.onload = resolve;
-//         })
-//       ]).then(() => {
-//         const canvas = document.createElement("canvas");
-//         const context = canvas.getContext('2d');
-
-//         // Set canvas dimensions to match the larger of the two images
-//         canvas.width = Math.max(enlargedWidth, backgroundImage.width);
-//         canvas.height = Math.max(enlargedHeight, backgroundImage.height);
-
-//         // Draw the background image as the base
-//         context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-
-//         // Calculate dimensions and positioning for the modelViewer image
-//         const aspectRatioModelViewer = modelViewer.clientWidth / modelViewer.clientHeight;
-//         const sizeFactor = .9; // Adjust as needed
-
-//         let modelViewerWidth = modelViewer.clientWidth * sizeFactor;
-//         let modelViewerHeight = modelViewer.clientHeight * sizeFactor;
-
-//         let modelViewerX = (canvas.width - modelViewerWidth) / 2;
-//         let modelViewerY = (canvas.height - modelViewerHeight) / 2;
-
-//         // Draw the modelViewer screenshot centered on top with increased size
-//         context.drawImage(screenshot, modelViewerX, modelViewerY, modelViewerWidth, modelViewerHeight);
-
-//         // Set the download link properties
-//         a.href = canvas.toDataURL();
-//         a.download = "export output.png";
-
-//         // Simulate a click on the link to trigger the download
-//         a.click();
-
-//         // Revert to the original size
-//         modelViewer.style.width = originalWidth + "px";
-//         modelViewer.style.height = originalHeight + "px";
-
-//         // Clean up
-//         URL.revokeObjectURL(a.href);
-//       });
-//     }, 100); // Adjust the delay as needed
-//   }
-
-// function screenshotFunction() {
-//     const secondImageUrl = './assets/images/modelImages/pdf_watermark.webp'; // Background image URL
-
-//     if (!modelViewer) {
-//         console.error("ModelViewer element not found");
-//         return;
-//     }
-
-//     // Increase the size of the modelViewer for better clarity
-//     const enlargedWidth = 3500; // Adjust as needed for better quality
-//     const enlargedHeight = 3500; // Adjust as needed for better quality
-
-//     // Save the original size
-//     const originalWidth = modelViewer.clientWidth;
-//     const originalHeight = modelViewer.clientHeight;
-
-//     // Set the enlarged size for better screenshot quality
-//     modelViewer.style.width = enlargedWidth + "px";
-//     modelViewer.style.height = enlargedHeight + "px";
-
-//     // Create a link element to trigger the download
-//     const a = document.createElement("a");
-
-//     // After a short delay to allow the modelViewer to render at the new size
-//     setTimeout(() => {
-//         // Capture the modelViewer screenshot
-//         let screenshot = new Image();
-//         screenshot.src = modelViewer.toDataURL({
-//             format: 'png',
-//             multiplier: window.devicePixelRatio * 5 // High resolution for better quality (consider device pixel ratio)
-//         });
-
-//         // Create an Image element for the background image (watermark)
-//         let backgroundImage = new Image();
-//         backgroundImage.crossOrigin = 'anonymous'; // Set crossOrigin if images are from different origins
-//         backgroundImage.src = secondImageUrl;
-
-//         // After both images have loaded
-//         Promise.all([
-//             new Promise(resolve => {
-//                 screenshot.onload = resolve;
-//             }),
-//             new Promise(resolve => {
-//                 backgroundImage.onload = resolve;
-//             })
-//         ]).then(() => {
-//             const { jsPDF } = window.jspdf;
-//             // Create a new jsPDF instance
-//             const doc = new jsPDF();
-
-//             // Define A4 page dimensions in mm (210 x 297)
-//             const A4_WIDTH = 210;
-//             const A4_HEIGHT = 297;
-
-//             // Maintain the aspect ratio of the screenshot (scale to fit A4 width)
-//             let imgWidth = A4_WIDTH; // Width in mm
-//             let imgHeight = (screenshot.height / screenshot.width) * imgWidth; // Maintain aspect ratio
-
-//             // If the image height exceeds the A4 page height, scale down proportionally
-//             if (imgHeight > A4_HEIGHT) {
-//                 const scaleFactor = A4_HEIGHT / imgHeight;
-//                 imgHeight *= scaleFactor;
-//                 imgWidth *= scaleFactor;
-//             }
-
-//             // Add a scaling factor to reduce the image size (e.g., 0.7 means 70% of the calculated size)
-//             const scalingFactor = 0.7; // Scale the image to 70% of its original size
-//             imgWidth *= scalingFactor;
-//             imgHeight *= scalingFactor;
-
-//             // Calculate the X and Y position for centering the image (with offset)
-//             const centerX = (A4_WIDTH - imgWidth) / 2;
-//             const offsetY = 20; // You can change this value to adjust how much to move down
-//             const centerY = (A4_HEIGHT - imgHeight) / 2 + offsetY; // Apply the offset
-
-//             // Add the background image (watermark) to the PDF
-//             doc.addImage(backgroundImage, 'WEBP', 0, 0, A4_WIDTH, A4_HEIGHT); // A4 size as background
-
-//             // Add the screenshot image to the PDF (centered with slight offset)
-//             doc.addImage(screenshot, 'PNG', centerX, centerY, imgWidth, imgHeight);
-
-//             // Save the generated PDF with the image
-//             doc.save('exported_output.pdf');
-
-//             // Revert to the original size
-//             modelViewer.style.width = originalWidth + "px";
-//             modelViewer.style.height = originalHeight + "px";
-
-//             pdfModal.style.visibility = 'hidden';
-//         });
-//     }, 100); // Adjust the delay if needed to allow time for rendering
-// }
 
 function screenshotFunction() {
   const secondImageUrl = `./assets/images/modelImages/${pdfImageBackground}`; // Background image URL

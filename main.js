@@ -200,6 +200,7 @@ function selectModel(modelIndex) {
     item.classList.toggle("selected", index === modelIndex);
   });
 
+  
   // Update model display
   document.getElementById("modelTitle").textContent = model.name;
   document.getElementById("modelCapacity").textContent = model.capacity;
@@ -387,7 +388,13 @@ async function applyTextureBase64(base64Image) {
       labelMatTextureUnder.pbrMetallicRoughness.setBaseColorFactor("#ffffff"); // RGBA: white + 0 alpha
 
       labelMatTextureUnder.setAlphaMode("BLEND");
-      labelMatTextureUnder.setAlphaCutoff(0);
+      // labelMatTextureUnder.setAlphaCutoff(0);
+      const pbr = labelMatTextureUnder.pbrMetallicRoughness;
+      pbr.setBaseColorFactor([1, 1, 1, 0.36]);
+      labelMatTextureUnder.setAlphaMode("BLEND");
+      pbr.setMetallicFactor(1);
+      pbr.setRoughnessFactor(0.12);
+      labelMatTextureUnder.setEmissiveFactor("#888888");
     }
 
     // labelMat.setEmissiveFactor("#000000");
@@ -496,6 +503,10 @@ function togglePatternsSection() {
     patternsSection.style.display = "block";
     materialColorUpdate.style.display = "flex";
     customizeButton.style.display = "block";
+  }
+
+  if (currentCategory == 0) {
+    customizeButton.style.display = "none";
   }
 
   let selectCategoryFinal;
@@ -1116,6 +1127,11 @@ function selectModel(modelIndex) {
   document.getElementById("modelTitle").textContent = model.name;
   document.getElementById("modelCapacity").textContent = model.capacity;
 
+  const customizeButton = document.getElementById("editCustomiseButton");
+  if (model.name == "4MP-HC-50" || model.type == "sipper") {
+    customizeButton.style.display = 'none';
+  }
+  else customizeButton.style.display = 'flex';
   // Update model viewer
   const placeholder = document.getElementById("modelPlaceholder");
   placeholder.innerHTML = `<model-viewer 
@@ -1283,7 +1299,7 @@ function updateIMLDesignCards() {
 
   const noFillImage =
     currentCategory === 0 ? "no_fill_circle.png" : "no_fill_rectangle.png";
-  currentCategory === 2
+  (currentCategory === 2)
     ? (customizeButton.style.display = "none")
     : (customizeButton.style.display = "unset");
   // Add patterns for current category
