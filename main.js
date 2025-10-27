@@ -374,8 +374,8 @@ async function applyTextureBase64(base64Image) {
     labelMat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]); // RGBA: white + 0 alpha
     labelMat.pbrMetallicRoughness.setBaseColorFactor("#ffffff"); // RGBA: white + 0 alpha
 
-    labelMat.setAlphaMode("BLEND");
-    labelMat.setAlphaCutoff(1);
+    labelMat.setAlphaMode("MASK");
+    labelMat.setAlphaCutoff(0.5);
 
     const labelMatTextureUnder = materials.find((m) =>
       m.name.toLowerCase().includes("texture_under")
@@ -495,15 +495,15 @@ function togglePatternsSection() {
   const customizeButton = document.getElementById("editCustomiseButton");
 
   // Hide patterns section only when Sipper Glass (category 2) is active
-  if (currentCategory === 2) {
-    patternsSection.style.display = "none";
-    materialColorUpdate.style.display = "none";
-    customizeButton.style.display = "none";
-  } else {
-    patternsSection.style.display = "block";
-    materialColorUpdate.style.display = "flex";
-    customizeButton.style.display = "block";
-  }
+  // if (currentCategory === 2) {
+  //   patternsSection.style.display = "none";
+  //   materialColorUpdate.style.display = "none";
+  //   customizeButton.style.display = "none";
+  // } else {
+  //   patternsSection.style.display = "block";
+  //   materialColorUpdate.style.display = "flex";
+  //   customizeButton.style.display = "block";
+  // }
 
   if (currentCategory == 0) {
     customizeButton.style.display = "none";
@@ -523,6 +523,7 @@ function togglePatternsSection() {
 
   const channel = new BroadcastChannel("session-sync");
   sessionStorage.setItem("model_type", selectCategoryFinal); // Set sessionStorage in Tab 1
+  sessionStorage.setItem("model_50", is50ml);
   console.log("sent message");
   channel.postMessage({ type: selectCategoryFinal });
 }
@@ -799,116 +800,116 @@ async function downloadPDF() {
   // --- Page 2 (centered image only) ---
   // pdf.addPage();
   // --- Page 2 (pattern texture image) ---
-  if (model.type !== "sipper" && (base64Global || global_logo_file)) {
-    pdf.addPage();
+  // if (model.type !== "sipper" && (base64Global || global_logo_file)) {
+  //   pdf.addPage();
 
-    addWatermark(pdf, watermarkImg, pageWidth, pageHeight);
+  //   addWatermark(pdf, watermarkImg, pageWidth, pageHeight);
 
-    pdf.addImage(
-      logoImg,
-      "PNG",
-      pageWidth - logoWidth - 40,
-      30,
-      logoWidth,
-      logoHeight
-    );
+  //   pdf.addImage(
+  //     logoImg,
+  //     "PNG",
+  //     pageWidth - logoWidth - 40,
+  //     30,
+  //     logoWidth,
+  //     logoHeight
+  //   );
 
-    if (base64Global) {
-      const patternImgData = await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // important if loading from external domain
-        img.src = base64Global;
-        img.onload = () => {
-          // Draw image onto canvas to get base64
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          resolve({
-            dataUrl: canvas.toDataURL("image/png"),
-            width: img.width,
-            height: img.height,
-          });
-        };
-        img.onerror = (err) => reject(err);
-      });
+  //   if (base64Global) {
+  //     const patternImgData = await new Promise((resolve, reject) => {
+  //       const img = new Image();
+  //       img.crossOrigin = "anonymous"; // important if loading from external domain
+  //       img.src = base64Global;
+  //       img.onload = () => {
+  //         // Draw image onto canvas to get base64
+  //         const canvas = document.createElement("canvas");
+  //         canvas.width = img.width;
+  //         canvas.height = img.height;
+  //         const ctx = canvas.getContext("2d");
+  //         ctx.drawImage(img, 0, 0);
+  //         resolve({
+  //           dataUrl: canvas.toDataURL("image/png"),
+  //           width: img.width,
+  //           height: img.height,
+  //         });
+  //       };
+  //       img.onerror = (err) => reject(err);
+  //     });
 
-      // Calculate dimensions to fit page while preserving aspect ratio
-      const maxWidth = pageWidth - 100;
-      const maxHeight = pageHeight - 100;
-      let imgWidth = patternImgData.width;
-      let imgHeight = patternImgData.height;
+  //     // Calculate dimensions to fit page while preserving aspect ratio
+  //     const maxWidth = pageWidth - 100;
+  //     const maxHeight = pageHeight - 100;
+  //     let imgWidth = patternImgData.width;
+  //     let imgHeight = patternImgData.height;
 
-      // Scale image down if it exceeds max dimensions
-      const widthRatio = maxWidth / imgWidth;
-      const heightRatio = maxHeight / imgHeight;
-      const scale = Math.min(widthRatio, heightRatio, 1); // don't upscale
+  //     // Scale image down if it exceeds max dimensions
+  //     const widthRatio = maxWidth / imgWidth;
+  //     const heightRatio = maxHeight / imgHeight;
+  //     const scale = Math.min(widthRatio, heightRatio, 1); // don't upscale
 
-      imgWidth = imgWidth * scale;
-      imgHeight = imgHeight * scale;
+  //     imgWidth = imgWidth * scale;
+  //     imgHeight = imgHeight * scale;
 
-      const imgX = (pageWidth - imgWidth) / 2;
-      const imgY = (pageHeight - imgHeight) / 2;
+  //     const imgX = (pageWidth - imgWidth) / 2;
+  //     const imgY = (pageHeight - imgHeight) / 2;
 
-      pdf.addImage(
-        patternImgData.dataUrl,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth,
-        imgHeight
-      );
-    }
+  //     pdf.addImage(
+  //       patternImgData.dataUrl,
+  //       "PNG",
+  //       imgX,
+  //       imgY,
+  //       imgWidth,
+  //       imgHeight
+  //     );
+  //   }
 
-    if (global_logo_file) {
-      const patternImgData = await new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // important if loading from external domain
-        img.src = global_logo_file;
-        img.onload = () => {
-          // Draw image onto canvas to get base64
-          const canvas = document.createElement("canvas");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0);
-          resolve({
-            dataUrl: canvas.toDataURL("image/png"),
-            width: img.width,
-            height: img.height,
-          });
-        };
-        img.onerror = (err) => reject(err);
-      });
+  //   if (global_logo_file) {
+  //     const patternImgData = await new Promise((resolve, reject) => {
+  //       const img = new Image();
+  //       img.crossOrigin = "anonymous"; // important if loading from external domain
+  //       img.src = global_logo_file;
+  //       img.onload = () => {
+  //         // Draw image onto canvas to get base64
+  //         const canvas = document.createElement("canvas");
+  //         canvas.width = img.width;
+  //         canvas.height = img.height;
+  //         const ctx = canvas.getContext("2d");
+  //         ctx.drawImage(img, 0, 0);
+  //         resolve({
+  //           dataUrl: canvas.toDataURL("image/png"),
+  //           width: img.width,
+  //           height: img.height,
+  //         });
+  //       };
+  //       img.onerror = (err) => reject(err);
+  //     });
 
-      // Calculate dimensions to fit page while preserving aspect ratio
-      const maxWidth = pageWidth - 100;
-      const maxHeight = pageHeight - 100;
-      let imgWidth = patternImgData.width;
-      let imgHeight = patternImgData.height;
+  //     // Calculate dimensions to fit page while preserving aspect ratio
+  //     const maxWidth = pageWidth - 100;
+  //     const maxHeight = pageHeight - 100;
+  //     let imgWidth = patternImgData.width;
+  //     let imgHeight = patternImgData.height;
 
-      // Scale image down if it exceeds max dimensions
-      const widthRatio = maxWidth / imgWidth;
-      const heightRatio = maxHeight / imgHeight;
-      const scale = Math.min(widthRatio, heightRatio, 1); // don't upscale
+  //     // Scale image down if it exceeds max dimensions
+  //     const widthRatio = maxWidth / imgWidth;
+  //     const heightRatio = maxHeight / imgHeight;
+  //     const scale = Math.min(widthRatio, heightRatio, 1); // don't upscale
 
-      imgWidth = imgWidth * scale;
-      imgHeight = imgHeight * scale;
+  //     imgWidth = imgWidth * scale;
+  //     imgHeight = imgHeight * scale;
 
-      const imgX = (pageWidth - imgWidth) / 2;
-      const imgY = (pageHeight - imgHeight) / 2;
+  //     const imgX = (pageWidth - imgWidth) / 2;
+  //     const imgY = (pageHeight - imgHeight) / 2;
 
-      pdf.addImage(
-        patternImgData.dataUrl,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth,
-        imgHeight
-      );
-    }
-  }
+  //     pdf.addImage(
+  //       patternImgData.dataUrl,
+  //       "PNG",
+  //       imgX,
+  //       imgY,
+  //       imgWidth,
+  //       imgHeight
+  //     );
+  //   }
+  // }
 
   // Save PDF
   pdf.save(`${model.name}.pdf`);
@@ -1101,6 +1102,7 @@ function applyTextureToMesh(mesh) {
   img.src = currentPatternTexture;
 }
 
+let is50ml = false;
 // Updated selectModel function - REPLACE your existing one
 function selectModel(modelIndex) {
   selectedModel = modelIndex;
@@ -1130,8 +1132,19 @@ function selectModel(modelIndex) {
   const customizeButton = document.getElementById("editCustomiseButton");
   if (model.name == "4MP-HC-50" || model.type == "sipper") {
     customizeButton.style.display = 'none';
+    is50ml = true;
+    sessionStorage.setItem("model_50", is50ml);
+    if (model.type == "sipper") {colorChangeFunction("lid");} else colorChangeFunction();
   }
-  else customizeButton.style.display = 'flex';
+  else {
+    customizeButton.style.display = 'flex';
+    is50ml = false;
+    sessionStorage.setItem("model_50", is50ml);
+    colorChangeFunction();
+  }
+
+  // togglePatternsSection();
+
   // Update model viewer
   const placeholder = document.getElementById("modelPlaceholder");
   placeholder.innerHTML = `<model-viewer 
@@ -1162,6 +1175,27 @@ function selectModel(modelIndex) {
       );
     }
   }, 100);
+}
+
+function colorChangeFunction(v_) {
+  const selectDropdown = document.getElementById("materialType");
+  const options = selectDropdown.querySelectorAll("option");
+
+  if (v_) {
+    // Hide all options except the first
+    options.forEach((option, index) => {
+      if (index !== 0) {
+        option.style.display = 'none';
+      }
+    });
+    // Optionally reset to the first option
+    selectDropdown.selectedIndex = 0;
+  } else {
+    // Show all options again
+    options.forEach(option => {
+      option.style.display = '';
+    });
+  }
 }
 
 // Custom pattern upload handler
@@ -1489,7 +1523,7 @@ async function applyLogo(logoImage) {
   const modelViewer = document.querySelector("model-viewer");
   if (!modelViewer) return;
 
-  const size = 512;
+  const size = 500;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
@@ -1528,7 +1562,7 @@ async function applyLogo(logoImage) {
   const materials = modelViewer.model.materials;
 
   const lid_logo = materials.find((m) =>
-    m.name.toLowerCase().includes("lid_logo")
+    m.name === "lid_logo"
   );
   if (lid_logo) {
     lid_logo.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
@@ -1651,6 +1685,9 @@ function applyMaterialColor(type, color) {
   );
 
   if (!mainMaterial) {
+    if (type == "lid" && currentCategory == 2) {
+      showToast("No lid found to change colour");
+    }
     console.warn(`⚠ Material '${targetName}' not found`);
     return;
   }
@@ -1741,6 +1778,9 @@ function applyMaterialColor(type, color) {
     );
 
     if (!mainMaterial) {
+      if (targetName == "lid" && currentCategory == 2) {
+        showToast("No lid found to change colour");
+      }
       console.warn(`⚠ Material '${targetName}' not found`);
       return;
     }
@@ -1860,7 +1900,7 @@ async function applyLogoFromSrc(src) {
   const materials = modelViewer.model.materials;
 
   const lid_logo = materials.find((m) =>
-    m.name.toLowerCase().includes("lid_logo")
+    m.name === "lid_logo"
   );
   if (lid_logo) {
     lid_logo.pbrMetallicRoughness.baseColorTexture.setTexture(tex);
@@ -1884,3 +1924,49 @@ updateLogoGrid();
 
 // Initial render
 renderColorOptions(materialDropdown.value);
+
+function showToast(message, type = "error") {
+  const container = document.getElementById("toast-container");
+
+  // Remove any existing toast
+  const existingToast = container.querySelector(".toast-message");
+  if (existingToast) {
+    existingToast.remove();
+  }
+
+  // Create new toast element
+  const toast = document.createElement("div");
+  toast.classList.add("toast-message", "animate-slide-in");
+  if (type === "error") toast.classList.add("toast-error");
+  else toast.classList.add("toast-success");
+
+  toast.textContent = message;
+
+  // Append toast
+  container.appendChild(toast);
+
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.add("fade-out");
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+
+// Animation styles
+// const style = document.createElement("style");
+// style.textContent = `
+// @keyframes slide-in {
+//   from { opacity: 0; transform: translateY(-10px); }
+//   to { opacity: 1; transform: translateY(0); }
+// }
+// .animate-slide-in {
+//   animation: slide-in 0.3s ease-out;
+// }
+// `;
+// document.head.appendChild(style);
+
+// Example usage:
+if (type === "lid" && currentCategory === 2) {
+  showToast("No lid found to change colour", "error");
+}

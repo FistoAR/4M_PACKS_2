@@ -53,6 +53,12 @@ function setSelectedModelContent(chosenModel) {
   if (chosenModel == "sipper") {
     document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for Sipper Containers<br><a href="./index.html">Back to home</a></div>`;
   }
+
+  const is50 = sessionStorage.getItem("model_50");
+  console.log(`is 50: ${is50}`);
+  if (is50 == true) {
+    document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for 50ml round container<br><a href="./index.html">Back to home</a></div>`;
+  }
   setBackgroundImage(
     `./assets/images/images/default_${chosenModel}.png`,
     false
@@ -1228,11 +1234,23 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
                 "x",
                 finalImg.height
               );
+              
+          const windowWidth = window.innerWidth;
+          const canvasWidth = canvas.getWidth();
+          let finalMaxWidth = maxWidth;
 
-              const leftPos = 45;
+          windowWidth <= 1300 ? (finalMaxWidth = 75) : (finalMaxWidth = 100);
+          windowWidth <= 1024 ? (finalMaxWidth = 75) : (finalMaxWidth = 100);
+          windowWidth <= 500 ? (finalMaxWidth = 100) : (finalMaxWidth = 100);
+          windowWidth <= 320 ? (finalMaxWidth = 75) : (finalMaxWidth = 100);
+
+          // Scale the image based on maxWidth while maintaining the aspect ratio
+          let newWidth = finalMaxWidth;
+              const newleft =
+            chosenModel == "round" ? 50 : (canvasWidth - newWidth) / 2;
 
               finalImg.set({
-                left: leftPos,
+                left: newleft,
                 top: 45,
                 hasControls: true,
                 hasBorders: true,
