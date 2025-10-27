@@ -16,11 +16,11 @@ body {
 .header {
     /* background: linear-gradient(135deg, #ff6b35, #f7931e); */
     background-color: #EFF2FB;
-    height: 67px;
+    height: 75px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 27px;
+    padding: 0 30px;
     color: white;
     position: relative;
     z-index: 99;
