@@ -4066,7 +4066,7 @@ saveButton.addEventListener("click", () => {
   const dataURL = canvas.toDataURL({
     format: "png",
     quality: 1.0, // Quality from 0 to 1 (only applies to JPEG, but good to include)
-    multiplier: 4, // Multiplier for high-res output (e.g., 4x resolution)
+    multiplier: 1, // Multiplier for high-res output (e.g., 4x resolution)
   });
 
   // Create a temporary download link
