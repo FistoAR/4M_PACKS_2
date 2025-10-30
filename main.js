@@ -9,6 +9,7 @@ const categories = [
         src: "./assets/glb/round/50ml_hinged_container.glb",
         img: "./container_images/50 hinged container n.webp",
         type: "round",
+        scale: 0.5
       },
       {
         name: "4MP-R-120",
@@ -16,6 +17,7 @@ const categories = [
         src: "./assets/glb/round/120ml_round.glb",
         img: "./container_images/120 hinged container n.webp",
         type: "round",
+        scale: 0.7
       },
       {
         name: "4MP-R-250",
@@ -23,6 +25,7 @@ const categories = [
         src: "./assets/glb/round/250ml_round.glb",
         img: "./container_images/250ml n1.webp",
         type: "round",
+        scale: 0.8
       },
       {
         name: "4MP-R-500",
@@ -30,6 +33,7 @@ const categories = [
         src: "./assets/glb/round/500ml_round.glb",
         img: "./container_images/4.500ml container.webp",
         type: "round",
+        scale: 0.95
       },
       {
         name: "4MP-R-750",
@@ -37,6 +41,7 @@ const categories = [
         src: "./assets/glb/round/750ml_round.glb",
         img: "./container_images/5.750ml container n2.webp",
         type: "round",
+        scale: 1
       },
     ],
   },
@@ -49,6 +54,7 @@ const categories = [
         src: "./assets/glb/rectangle/500_rectangle.glb",
         img: "./container_images/6 - 500ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        scale: 1
       },
       {
         name: "4MP-TER-750",
@@ -56,6 +62,7 @@ const categories = [
         src: "./assets/glb/rectangle/750_rectangle.glb",
         img: "./container_images/7 - 750ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        scale: 1
       },
       {
         name: "4MP-TER-1000",
@@ -63,6 +70,7 @@ const categories = [
         src: "./assets/glb/rectangle/1000_rectangle.glb",
         img: "./container_images/8 - 1000ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        scale: 1
       },
     ],
   },
@@ -75,6 +83,7 @@ const categories = [
         src: "./assets/glb/sipper/120ml_dessert_cup.glb",
         img: "./container_images/sipper_models/120_dessert_cup.webp",
         type: "sipper",
+        scale: 0.6
       },
       {
         name: "4MP-G-250",
@@ -82,6 +91,7 @@ const categories = [
         src: "./assets/glb/sipper/250ml_glass.glb",
         img: "./container_images/sipper_models/250ml_glass.webp",
         type: "sipper",
+        scale: 0.75
       },
       {
         name: "4MP-SG-250",
@@ -89,6 +99,7 @@ const categories = [
         src: "./assets/glb/sipper/250_Sipper_glass.glb",
         img: "./container_images/sipper_models/250ml_sipper_glass.webp",
         type: "sipper",
+        scale: 0.75
       },
       {
         name: "4MP-GF-250",
@@ -96,6 +107,7 @@ const categories = [
         src: "./assets/glb/sipper/250_glasswith_flat_lid.glb",
         img: "./container_images/sipper_models/250ml_glass_with_flat_lid.webp",
         type: "sipper",
+        scale: 0.75
       },
       {
         name: "4MP-G-350",
@@ -103,6 +115,7 @@ const categories = [
         src: "./assets/glb/sipper/350ml_glass.glb",
         img: "./container_images/sipper_models/350ml_glass.webp",
         type: "sipper",
+        scale: 1
       },
       {
         name: "4MP-SG-350",
@@ -110,6 +123,7 @@ const categories = [
         src: "./assets/glb/sipper/350_sipper_glass.glb",
         img: "./container_images/sipper_models/350ml_sipper_glass.webp",
         type: "sipper",
+        scale: 1
       },
     ],
   },
@@ -119,6 +133,7 @@ let currentCategory = 0;
 let selectedModel = 0;
 let selectedPattern = 0;
 let zoomLevel = 1;
+let currentSelectedModel = null;
 
 // Initialize the page
 function init() {
@@ -195,6 +210,8 @@ function selectModel(modelIndex) {
   selectedModel = modelIndex;
   const model = categories[currentCategory].models[modelIndex];
 
+  
+
   // Update selected model in grid
   document.querySelectorAll(".model-item").forEach((item, index) => {
     item.classList.toggle("selected", index === modelIndex);
@@ -207,7 +224,7 @@ function selectModel(modelIndex) {
 
   // Update model viewer (placeholder for actual GLB loading)
   const placeholder = document.getElementById("modelPlaceholder");
-  placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%;" id="viewer" disable-tap disable-pan disable-zoom   interaction-prompt="none"></model-viewer>`;
+  placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%; scale: ${model.scale}" id="viewer" disable-tap disable-pan disable-zoom   interaction-prompt="none"></model-viewer>`;
 }
 
 // Select pattern
@@ -310,6 +327,10 @@ function editModel() {
     selectCategoryFinal = "round";
   }
   sessionStorage.setItem("model_type", selectCategoryFinal);
+  console.log(`Current selected model: ${currentSelectedModel}`);
+  if (currentSelectedModel) {
+    sessionStorage.setItem("current_model", currentSelectedModel);
+  }
   const modelViewer = document.querySelector("model-viewer");
   // switchModel(modelViewer);
   window.open("edit.html", "_blank");
@@ -1109,6 +1130,9 @@ function selectModel(modelIndex) {
 
   const model = categories[currentCategory].models[modelIndex];
 
+  currentSelectedModel = model.name;
+  console.log(`Current selected model: ${currentSelectedModel}`);
+
   let camera_orbit = "";
   if (model.type == "round" && modelIndex == 0) {
     camera_orbit = `camera-orbit="-1.581deg 52.87deg 0.1261m" `;
@@ -1152,7 +1176,7 @@ function selectModel(modelIndex) {
         alt="${model.name}" 
         auto-rotate 
         camera-controls 
-        style="width: 100%; height: 100%;"
+        style="width: 100%; height: 100%; scale: ${model.scale}"
         id="viewer" disable-tap disable-pan disable-zoom
         ${camera_orbit}
         min-field-of-view="28deg"

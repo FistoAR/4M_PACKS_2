@@ -24,6 +24,11 @@ const chosenModel = sessionStorage.getItem("model_type")
   ? sessionStorage.getItem("model_type")
   : "sipper";
 
+const chosenCurrentModel = sessionStorage.getItem("current_model")
+  ? sessionStorage.getItem("current_model")
+  : "normal";
+
+
 const channel = new BroadcastChannel("session-sync");
 
 channel.onmessage = (event) => {
@@ -59,8 +64,15 @@ function setSelectedModelContent(chosenModel) {
   if (is50 == true) {
     document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for 50ml round container<br><a href="./index.html">Back to home</a></div>`;
   }
+  let newModel = chosenModel;
+  if (chosenCurrentModel.includes('500') && chosenModel == 'round')  {
+    newModel = `500_${chosenModel}`;
+  }
+  if (chosenCurrentModel.includes('750') && chosenModel == 'round')  {
+    newModel = `750_${chosenModel}`;
+  }
   setBackgroundImage(
-    `./assets/images/images/default_${chosenModel}.png`,
+    `./assets/images/images/default_${newModel}.png`,
     false
   );
   // setBackgroundImage("/assets/images/images/default_round.png", false);
@@ -68,20 +80,27 @@ function setSelectedModelContent(chosenModel) {
 }
 
 function createTemplates(chosenModel) {
+  let newModel = chosenModel;
+  if (chosenCurrentModel.includes('500') && chosenModel == 'round')  {
+    newModel = `500_${chosenModel}`;
+  }
+  if (chosenCurrentModel.includes('750') && chosenModel == 'round')  {
+    newModel = `750_${chosenModel}`;
+  }
   templateContainer.innerHTML = `
-    <img src="./assets/images/images/default_${chosenModel}.png" alt="template1" title="template1"
+    <img src="./assets/images/images/default_${newModel}.png" alt="template1" title="template1"
         loading="eager" width="5%" height="auto" class="template-image selected" id="template1"
         template-no=1 data-theme="black">
 
-    <img src="./assets/images/pattern_images/${chosenModel}_green.png" alt="template2" title="template2"
+    <img src="./assets/images/pattern_images/${newModel}_green.png" alt="template2" title="template2"
         loading="eager" width="5%" height="auto" class="template-image" id="template2"
         template-no=1 data-theme="white">
 
-    <img src="./assets/images/pattern_images/${chosenModel}_brown.png" alt="template3" title="template3"
+    <img src="./assets/images/pattern_images/${newModel}_brown.png" alt="template3" title="template3"
         loading="eager" width="5%" height="auto" class="template-image" id="template3"
         template-no=2 data-theme="white">
 
-    <img src="./assets/images/pattern_images/${chosenModel}_mix.png" alt="template4" title="template4"
+    <img src="./assets/images/pattern_images/${newModel}_mix.png" alt="template4" title="template4"
         loading="eager" width="5%" height="auto" class="template-image" id="template4"
         template-no=3 data-theme="black">
 
