@@ -9,6 +9,7 @@ const categories = [
         src: "./assets/glb/round/50ml_hinged_container.glb",
         img: "./container_images/50 hinged container n.webp",
         type: "round",
+        camera_orbit : `camera-orbit="-360deg 46.43deg 0.1261m"`,
         scale: 0.5
       },
       {
@@ -17,6 +18,7 @@ const categories = [
         src: "./assets/glb/round/120ml_round.glb",
         img: "./container_images/120 hinged container n.webp",
         type: "round",
+        camera_orbit : `camera-orbit="-362.8deg 85.55deg 0.1795m"`,
         scale: 0.7
       },
       {
@@ -25,6 +27,7 @@ const categories = [
         src: "./assets/glb/round/250ml_round.glb",
         img: "./container_images/250ml n1.webp",
         type: "round",
+        camera_orbit : `camera-orbit="-362.8deg 85.55deg 0.258m"`,
         scale: 0.8
       },
       {
@@ -33,7 +36,8 @@ const categories = [
         src: "./assets/glb/round/500ml_round.glb",
         img: "./container_images/4.500ml container.webp",
         type: "round",
-        scale: 0.95
+        camera_orbit : `camera-orbit="-359.6deg 84.36deg 0.2926m"`,
+        scale: 0.85
       },
       {
         name: "4MP-R-750",
@@ -41,6 +45,7 @@ const categories = [
         src: "./assets/glb/round/750ml_round.glb",
         img: "./container_images/5.750ml container n2.webp",
         type: "round",
+        camera_orbit : `camera-orbit="-359.6deg 84.36deg 0.325m"`,
         scale: 1
       },
     ],
@@ -54,6 +59,7 @@ const categories = [
         src: "./assets/glb/rectangle/500_rectangle.glb",
         img: "./container_images/6 - 500ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        camera_orbit : `camera-orbit="-1443deg 53.14deg 0.4303m" `,
         scale: 1
       },
       {
@@ -62,6 +68,7 @@ const categories = [
         src: "./assets/glb/rectangle/750_rectangle.glb",
         img: "./container_images/7 - 750ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        camera_orbit : `camera-orbit="-1443deg 53.14deg 0.4303m" `,
         scale: 1
       },
       {
@@ -70,6 +77,7 @@ const categories = [
         src: "./assets/glb/rectangle/1000_rectangle.glb",
         img: "./container_images/8 - 1000ml Tamper Evident Rectangular Container.webp",
         type: "rectangle",
+        camera_orbit : `camera-orbit="-1443deg 53.14deg 0.4303m" `,
         scale: 1
       },
     ],
@@ -83,6 +91,7 @@ const categories = [
         src: "./assets/glb/sipper/120ml_dessert_cup.glb",
         img: "./container_images/sipper_models/120_dessert_cup.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-448.5deg 91.47deg 0.2208m"`,
         scale: 0.6
       },
       {
@@ -91,6 +100,7 @@ const categories = [
         src: "./assets/glb/sipper/250ml_glass.glb",
         img: "./container_images/sipper_models/250ml_glass.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-541.3deg 81.98deg 0.2405m"`,
         scale: 0.75
       },
       {
@@ -99,6 +109,7 @@ const categories = [
         src: "./assets/glb/sipper/250_Sipper_glass.glb",
         img: "./container_images/sipper_models/250ml_sipper_glass.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-361.5deg 74.87deg 0.2913m"`,
         scale: 0.75
       },
       {
@@ -107,6 +118,7 @@ const categories = [
         src: "./assets/glb/sipper/250_glasswith_flat_lid.glb",
         img: "./container_images/sipper_models/250ml_glass_with_flat_lid.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-356deg 78.03deg 0.2449m"`,
         scale: 0.75
       },
       {
@@ -115,6 +127,7 @@ const categories = [
         src: "./assets/glb/sipper/350ml_glass.glb",
         img: "./container_images/sipper_models/350ml_glass.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-722.7deg 78.42deg 0.2953m"`,
         scale: 1
       },
       {
@@ -123,6 +136,7 @@ const categories = [
         src: "./assets/glb/sipper/350_sipper_glass.glb",
         img: "./container_images/sipper_models/350ml_sipper_glass.webp",
         type: "sipper",
+        camera_orbit : `camera-orbit="-722.7deg 78.42deg 0.3034m"`,
         scale: 1
       },
     ],
@@ -1178,7 +1192,7 @@ function selectModel(modelIndex) {
         camera-controls 
         style="width: 100%; height: 100%; scale: ${model.scale}"
         id="viewer" disable-tap disable-pan disable-zoom
-        ${camera_orbit}
+        ${model.camera_orbit}
         min-field-of-view="28deg"
         max-field-of-view="30deg"
         interaction-prompt="none"

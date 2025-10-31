@@ -132,8 +132,19 @@ function createTemplates(chosenModel) {
 
       const img = new Image();
       img.onload = function () {
-        const requiredWidth = chosenModel == "round" ? 2908 : 1926; // ✅ Set your required width
-        const requiredHeight = chosenModel == "round" ? 448 : 1289; // ✅ Set your required height
+        let requiredWidth = chosenModel == "round" ? 2908 : 1926; 
+        let requiredHeight = chosenModel == "round" ? 448 : 1289; 
+
+         if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
+            requiredWidth = 1838;
+            requiredHeight = 448;
+          }
+
+          else if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
+            requiredWidth = 4360;
+            requiredHeight = 701;
+          }
+        
 
         if (img.width !== requiredWidth || img.height !== requiredHeight) {
           alert(
@@ -432,7 +443,35 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
           const newleft =
             chosenModel == "round" ? 50 : (canvasWidth - newWidth) / 2;
           left = newleft;
-          const topPosition = (top || (canvasHeight - newHeight) / 2) + 30; // Use provided 'top' or center
+          let top_value = 30;
+
+          if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
+            top_value = 100;
+            if (windowWidth > 1351 && windowWidth < 1600) {
+              top_value = 75; 
+             }
+            else if (windowWidth < 1350) {
+              top_value = 50; 
+            }
+          }
+
+          else if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
+            top_value = 50;
+            if (windowWidth > 1351 && windowWidth < 1600) {
+              top_value = 30; 
+             }
+            else if (windowWidth < 1350) {
+              top_value = 20; 
+            }
+          }
+
+          else if (chosenModel == 'round') {
+            if (windowWidth < 1350) {
+              top_value = 15;
+            }
+          }
+
+          const topPosition = (top || (canvasHeight - newHeight) / 2) + top_value; // Use provided 'top' or center
 
           img.set({
             left: left,
@@ -585,8 +624,28 @@ function addText(textContent, color, baseFontSize = 16) {
   topPercentage = chosenModel == "round" ? 0.5 : 2;
   leftPercentage = chosenModel == "round" ? 1.35 : 0.68;
 
+  if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
+    topPercentage = 1;
+  }
+  if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
+    topPercentage = 0.65;
+  }
+
   const top = canvasHeight * topPercentage;
-  const left = canvasWidth * leftPercentage;
+  let left = canvasWidth * leftPercentage;
+
+//   if (chosenModel !== "round") {
+//   const windowWidth = window.innerWidth;
+
+//   // Set a max width based on window size (optional)
+//   let finalMaxWidth = 50; // default
+//   if (windowWidth <= 320) finalMaxWidth = 75;
+//   else if (windowWidth <= 1024) finalMaxWidth = 75;
+
+//   // We'll center using Fabric.js properties instead of manual math
+//   left = canvasWidth * 1.4;
+// }
+
 
   const text = new fabric.Text(textContent, {
     left: left, // Set the left position based on the percentage of canvas width
@@ -616,139 +675,6 @@ function addText(textContent, color, baseFontSize = 16) {
   };
 }
 
-// function addAddressText(textContent, color, left, top, fontSizeValue) {
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'addressText');
-
-//     if (existingText) {
-//         // Update properties of the existing text
-//         existingText.set({
-//             left: left,
-//             top: top,
-//             fill: color,
-//             fontSize: fontSizeValue
-//         });
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     } else {
-//         // If no existing text object is found, create a new one
-//         const text = new fabric.Text(textContent, {
-//             left: left,
-//             top: top,
-//             fill: color,
-//             fontSize: fontSizeValue,
-//             fontFamily: 'Arial',
-//             className: 'addressText',
-//             lockScalingX: true,  // Disable resizing on the X-axis
-//             lockScalingY: true   // Disable resizing on the Y-axis
-//         });
-//         canvas.add(text);
-//     }
-// }
-
-// function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'addressText');
-
-//     const canvasWidth = canvas.getWidth();
-//     const canvasHeight = canvas.getHeight();
-
-//     // Get window width for responsive design
-//     const windowWidth = window.innerWidth;
-//     const windowHeight = window.innerHeight;
-
-//     // Initialize fontSizeValue and position values
-//     let fontSizeValue = baseFontSize;
-//     let topPercentage = 0.1;  // Default 10% from the top of the canvas
-//     let leftPercentage = 0.1; // Default 10% from the left of the canvas
-
-//     // Define breakpoints and corresponding styles
-//     if (windowWidth <= 330) {  // Mobile screens
-//         fontSizeValue = baseFontSize * 0.4;  // Default font size
-//         topPercentage = 1.75;  // 10% from the top for desktop
-//         leftPercentage = 0.12; // 5% from the left for small screens
-//         console.log("Lesser or equal 600");
-//     }
-//     else if (windowWidth <= 600) {  // Mobile screens
-//         fontSizeValue = baseFontSize * 0.6;  // Default font size
-//         topPercentage = 2.8;  // 10% from the top for desktop
-//         leftPercentage = 0.18; // 5% from the left for small screens
-//         console.log("Lesser or equal 600");
-//     } else if (windowWidth <= 1100) {  // Tablets
-//         fontSizeValue = baseFontSize * .5;  // Default font size
-//         topPercentage = 2.1;  // 10% from the top for desktop
-//         leftPercentage = 0.12; // 8% from the left for tablet screens
-//         console.log("Lesser or equal 960");
-//     }
-//     else if (windowWidth <= 1300) {  // Default for typical desktop
-//         fontSizeValue = baseFontSize * .6;  // Default font size
-//         topPercentage = 2.45;  // 10% from the top for desktop
-//         leftPercentage = 0.15; // 10% from the left for desktop
-//         console.log("Lesser or equal 1920");
-//     }
-//     else if (windowWidth <= 1600) {  // Default for typical desktop
-//         fontSizeValue = baseFontSize * .75;  // Default font size
-//         topPercentage = 3;  // 10% from the top for desktop
-//         leftPercentage = 0.17; // 10% from the left for desktop
-//         console.log("Lesser or equal 1920");
-//     }
-//     else if (windowWidth <= 1920) {  // Default for typical desktop
-//         fontSizeValue = baseFontSize * .95;  // Default font size
-//         topPercentage = 3.8;  // 10% from the top for desktop
-//         leftPercentage = .20; // 10% from the left for desktop
-//         console.log("Lesser or equal 1920");
-//     } else {  // Larger screens (like ultra-wide)
-//         console.log("Main");
-//         fontSizeValue = baseFontSize * 1;  // Larger font size
-//         topPercentage = 4.5;  // 15% from the top for larger screens
-//         leftPercentage = .3; // 15% from the left for larger screens
-//     }
-
-//     if ((windowWidth >= 760 && windowWidth <= 900) && (windowHeight >= 900)) {
-//         fontSizeValue = baseFontSize * .95;  // Default font size
-//         topPercentage = 3.65;  // 10% from the top for desktop
-//         leftPercentage = .20;
-
-//         if (windowWidth > 800) {
-//             topPercentage = 4.20;
-//             leftPercentage = .28;
-//         }
-//         if (windowWidth == 800) {
-//             topPercentage = 4.5;
-//             leftPercentage = .30;
-//         }
-//     }
-//     console.log(`Font size value: ${fontSizeValue}`);
-
-//     // Calculate top and left position based on percentage of canvas dimensions
-//     const top = canvasHeight * topPercentage;
-//     const left = canvasWidth * leftPercentage;
-
-//     if (existingText) {
-//         // Update properties of the existing text
-//         existingText.set({
-//             fill: color
-//         });
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     } else {
-//         // If no existing text object is found, create a new one
-//         const text = new fabric.Text(textContent, {
-//             left: left,
-//             top: top,
-//             fill: color,
-//             fontSize: fontSizeValue,
-//             fontFamily: 'Arial',
-//             className: 'addressText',
-//             lockScalingX: true,  // Disable resizing on the X-axis
-//             lockScalingY: true   // Disable resizing on the Y-axis
-//         });
-//         canvas.add(text);
-
-//         addressProperties = {
-//             top: text.top,
-//             left: text.left,
-//         }
-//     }
-// }
 
 function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
   const existingText = canvas
@@ -770,11 +696,35 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
 
   leftPercentage = chosenModel == "round" ? 2.35 : 0.7;
 
+  if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
+    bottomOffset = 0.15;
+  }
+  if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
+    bottomOffset = 3.75;
+  }
+  
+
   const bottom = (canvasHeight * bottomOffset) / 10; // Adjust the bottom percentage to fit canvas height
   const top = canvasHeight - bottom; // Set the top position relative to the bottom
 
   // Calculate left position
-  const left = canvasWidth * leftPercentage;
+  let left = canvasWidth * leftPercentage;
+  console.log(`Left value before if: ${left}`);
+
+// if (chosenModel !== "round") {
+//   const windowWidth = window.innerWidth;
+
+//   // Set a max width based on window size (optional)
+//   let finalMaxWidth = 50; // default
+//   if (windowWidth <= 320) finalMaxWidth = 75;
+//   else if (windowWidth <= 1024) finalMaxWidth = 75;
+
+//   // We'll center using Fabric.js properties instead of manual math
+//   left = canvasWidth * 1.4;
+// }
+
+
+console.log(`Value of left: ${left}`);
 
   if (existingText) {
     // Update properties of the existing text
