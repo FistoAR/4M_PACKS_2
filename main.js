@@ -337,7 +337,10 @@ function editModel() {
     selectCategoryFinal = "round";
   } else if (currentCategory == 1) {
     selectCategoryFinal = "rectangle";
-  } else {
+  } else if (currentCategory == 2) {
+    selectCategoryFinal = "sipper";
+  }
+   else {
     selectCategoryFinal = "round";
   }
   sessionStorage.setItem("model_type", selectCategoryFinal);
@@ -477,7 +480,7 @@ function switchModel(modelViewer) {
 
   // Use regex to insert '/without_logo' before 'round/' or 'rectangle/'
   const newSrc = currentSrc.replace(
-    /(glb\/)(round|rectangle)\//,
+    /(glb\/)(round|rectangle|sipper)\//,
     "glb/without_logo/$2/"
   );
 
@@ -1168,7 +1171,9 @@ function selectModel(modelIndex) {
   document.getElementById("modelCapacity").textContent = model.capacity;
 
   const customizeButton = document.getElementById("editCustomiseButton");
-  if (model.name == "4MP-HC-50" || model.type == "sipper") {
+  if (model.name == "4MP-HC-50" 
+    // || model.type == "sipper"
+  ) {
     customizeButton.style.display = 'none';
     is50ml = true;
     sessionStorage.setItem("model_50", is50ml);
@@ -2005,6 +2010,6 @@ function showToast(message, type = "error") {
 // document.head.appendChild(style);
 
 // Example usage:
-if (type === "lid" && currentCategory === 2) {
-  showToast("No lid found to change colour", "error");
-}
+// if (type === "lid" && currentCategory === 2) {
+//   showToast("No lid found to change colour", "error");
+// }

@@ -56,7 +56,7 @@ setSelectedModelContent(chosenModel);
 
 function setSelectedModelContent(chosenModel) {
   if (chosenModel == "sipper") {
-    document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for Sipper Containers<br><a href="./index.html">Back to home</a></div>`;
+    // document.body.innerHTML = `<div class="no_edit_option">Customize feature not available for Sipper Containers<br><a href="./index.html">Back to home</a></div>`;
   }
 
   const is50 = sessionStorage.getItem("model_50");
@@ -70,6 +70,9 @@ function setSelectedModelContent(chosenModel) {
   }
   if (chosenCurrentModel.includes('750') && chosenModel == 'round')  {
     newModel = `750_${chosenModel}`;
+  }
+  if (chosenCurrentModel.includes('120') && chosenModel == 'sipper')  {
+    newModel = `120_${chosenModel}`;
   }
   setBackgroundImage(
     `./assets/images/images/default_${newModel}.png`,
@@ -86,6 +89,9 @@ function createTemplates(chosenModel) {
   }
   if (chosenCurrentModel.includes('750') && chosenModel == 'round')  {
     newModel = `750_${chosenModel}`;
+  }
+  if (chosenCurrentModel.includes('120') && chosenModel == 'sipper')  {
+    newModel = `120_${chosenModel}`;
   }
   templateContainer.innerHTML = `
     <img src="./assets/images/images/default_${newModel}.png" alt="template1" title="template1"
@@ -177,26 +183,6 @@ function createTemplates(chosenModel) {
   });
 }
 
-// function createTemplates(chosenModel) {
-//     // Start with the first static image
-//     let templateHTML = `
-//         <img src="./assets/images/images/default_${chosenModel}.png" alt="template1" title="template1"
-//             loading="eager" width="5%" height="auto" class="template-image selected" id="template1"
-//             template-no="1" data-theme="black">
-//     `;
-
-//     // Loop to create 14 dynamic images: round_1.png to round_14.png
-//     for (let i = 1; i <= 14; i++) {
-//         templateHTML += `
-//             <img src="./assets/images/pattern_images/new_round/round_${i}.png" alt="template${i + 1}" title="template${i + 1}"
-//                 loading="eager" width="5%" height="auto" class="template-image" id="template${i + 1}"
-//                 template-no="${i + 1}" data-theme="black">
-//         `;
-//     }
-
-//     // Set the inner HTML of the container
-//     templateContainer.innerHTML = templateHTML;
-// }
 
 function setBackgroundImage(url, booleanValue) {
   fabric.Image.fromURL(url, (img) => {
@@ -212,35 +198,6 @@ function setBackgroundImage(url, booleanValue) {
   });
 }
 
-// function setBackgroundImage(url, booleanValue) {
-//     fabric.Image.fromURL(url, (img) => {
-
-//         // Adjust the canvas size based on the image if needed (you can remove or modify this if not required)
-//         adjustCanvasSize(img);
-//         currentSvgObject = img;
-
-//         // Set the image to be non-selectable and non-evented
-//         img.set({ selectable: false, evented: false });
-
-//         // Store the background image URL
-//         storedBackgroundImageURL = url;
-
-//         // Define the fixed width and height (used to set the canvas size)
-//         const fixedWidth = 265;
-//         const fixedHeight = 661;
-
-//         // Apply the background image with CSS (instead of manual scaling)
-//         canvas.getElement().style.backgroundImage = `url(${url})`;
-
-//         // Set the background to cover the canvas (no cropping)
-//         canvas.getElement().style.backgroundSize = 'contain';
-//         canvas.getElement().style.backgroundPosition = 'center center';
-//         canvas.getElement().style.backgroundRepeat = 'no-repeat';
-
-//         // Optionally, save the state after setting the background image
-//         saveState();
-//     });
-// }
 
 function saveState() {
   const json = JSON.stringify({
@@ -443,9 +400,14 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
           const newleft =
             chosenModel == "round" ? 50 : (canvasWidth - newWidth) / 2;
           left = newleft;
+
+          if (chosenCurrentModel.includes('120') && chosenModel == 'sipper') {
+            left = 50;
+          }
+
           let top_value = 30;
 
-          if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
+          if ((chosenCurrentModel.includes('500') && chosenModel == 'round') ) {
             top_value = 100;
             if (windowWidth > 1351 && windowWidth < 1600) {
               top_value = 75; 
@@ -455,7 +417,8 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
             }
           }
 
-          else if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
+
+          else if ((chosenCurrentModel.includes('750') && chosenModel == 'round') || (chosenCurrentModel.includes('120') && chosenModel == 'sipper') ) {
             top_value = 50;
             if (windowWidth > 1351 && windowWidth < 1600) {
               top_value = 30; 
@@ -501,103 +464,6 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
     });
 }
 
-// function addText(textContent, color, initialLeft, initialTop, initialFontSize) {
-//     // Check if a text object with class 'businessText' already exists
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'businessText');
-
-//     if (existingText) {
-//         // Update properties of the existing text
-//         existingText.set({
-//             left: initialLeft,
-//             top: initialTop,
-//             fill: color,
-//             fontSize: initialFontSize
-//         });
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     } else {
-//         // If no existing text object is found, create a new one
-//         const text = new fabric.Text(textContent, {
-//             fill: color,
-//             fontSize: initialFontSize,
-//             fontFamily: 'Arial',
-//             className: 'businessText',
-//             lockScalingX: true,
-//             lockScalingY: true
-//         });
-
-//         // Dynamically calculate the canvas dimensions
-//         const canvasWidth = canvas.getWidth();
-//         const canvasHeight = canvas.getHeight();
-
-//         // Dynamically calculate the font size based on the canvas height
-//         const scaleFactor = canvasHeight / 945; // 945 is the original height used as a baseline
-//         const responsiveFontSize = (initialFontSize * 5.5) * scaleFactor;
-
-//         // Center the text horizontally
-//         const centeredLeft = ((canvasWidth - text.width * text.scaleX)) / 2 - 10;
-
-//         // Dynamically calculate the top position
-//         const logoObject = canvas.getObjects().find(obj => obj.className === 'logo');
-//         const logoHeight = logoObject ? logoObject.height * logoObject.scaleY : 0;
-//         const spaceFromLogo = 20; // Space between the logo and the text
-//         const adjustedTop = logoHeight + spaceFromLogo + 1000 * scaleFactor; // 150 is the original vertical offset baseline
-
-//         // Update the text's properties
-//         text.set({
-//             left: centeredLeft,
-//             top: adjustedTop,
-//             fontSize: responsiveFontSize
-//         });
-
-//         // Add the text to the canvas
-//         canvas.add(text);
-//         canvas.renderAll();
-//     }
-// }
-
-// function addText(textContent, color, leftPercent, topPercent, fontSizePercent) {
-//     // Check if a text object with class 'businessText' already exists
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'businessText');
-
-//     // Calculate responsive values based on the canvas size
-//     const canvasWidth = canvas.getWidth();
-//     const canvasHeight = canvas.getHeight();
-
-//     // Calculate left position based on percentage of canvas width
-//     const left = (leftPercent / 100) * canvasWidth;
-
-//     // Calculate top position based on percentage of canvas height
-//     const top = (topPercent / 100) * canvasHeight;
-
-//     // Calculate font size based on percentage of canvas width
-//     const fontSizeValue = (fontSizePercent / 100) * canvasWidth;
-
-//     if (existingText) {
-//         // Update properties of the existing text
-//         existingText.set({
-//             left: left,
-//             top: top,
-//             fill: color,
-//             fontSize: fontSizeValue
-//         });
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     } else {
-//         // If no existing text object is found, create a new one
-//         const text = new fabric.Text(textContent, {
-//             left: left,
-//             top: top,
-//             fill: color,
-//             fontSize: fontSizeValue,
-//             fontFamily: 'Arial',
-//             className: 'businessText',
-//             lockScalingX: true,  // Disable resizing on the X-axis
-//             lockScalingY: true   // Disable resizing on the Y-axis
-//         });
-//         canvas.add(text);
-//     }
-// }
 function addText(textContent, color, baseFontSize = 16) {
   // Check if a text object with class 'businessText' already exists
   const existingText = canvas
@@ -623,6 +489,12 @@ function addText(textContent, color, baseFontSize = 16) {
 
   topPercentage = chosenModel == "round" ? 0.5 : 2;
   leftPercentage = chosenModel == "round" ? 1.35 : 0.68;
+
+  if (chosenCurrentModel.includes('120') && chosenModel == 'sipper') {
+    leftPercentage = 1.35;
+    topPercentage = 0.8;
+  }
+  
 
   if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
     topPercentage = 1;
@@ -702,6 +574,12 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
   if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
     bottomOffset = 3.75;
   }
+
+    if (chosenCurrentModel.includes('120') && chosenModel == 'sipper') {
+    leftPercentage = 2.5;
+    bottomOffset = 2.75;
+  }
+  
   
 
   const bottom = (canvasHeight * bottomOffset) / 10; // Adjust the bottom percentage to fit canvas height
@@ -847,40 +725,6 @@ function changeAddressAlignment(checkCondition, templateNumber) {
   }
 }
 
-// function changeAddressAlignment(checkCondition, templateNumber) {
-//     let addressText = canvas.getObjects().find(obj => obj.className === 'addressText'); // Assuming you have a reference to your addressText object
-//     defaultXPosition = addressText.left;
-//     defaultYPosition = addressText.top;
-//     if (!isChanged && checkCondition == 'yes') {
-//         // Store initial position
-
-//         let topAdjustableValue = 0;
-//         if (templateNumber == 9) {
-//             topAdjustableValue = addressText.top +  20;
-//         }
-//         else if (templateNumber == 16) {
-//             topAdjustableValue = addressText.top - 35;
-//         }
-//         // Slightly adjust the top position
-//         addressText.set({
-//             top: topAdjustableValue // Adjust the value as needed
-//         });
-//         canvas.renderAll(); // Re-render the canvas to apply the changes
-//         isChanged = true;
-//     } else if (isChanged && checkCondition == 'no') {
-//         // Revert to original position
-//         addressText.set({
-//             top: defaultYPosition,
-//             left: defaultXPosition
-//         });
-//         canvas.renderAll(); // Re-render the canvas to apply the changes
-
-//         // Reset variables
-//         defaultXPosition = 0;
-//         defaultYPosition = 0;
-//         isChanged = false;
-//     }
-// }
 
 function doTemplateChange(numb) {
   addTemplateItems(numb);
@@ -1429,46 +1273,6 @@ function updateFontFamilyCustomText() {
   }
 }
 
-// Add event listener to update font family when the dropdown changes
-// document.getElementById('customTextFont-family1').addEventListener('change', updateFontFamilyCustomText);
-
-// font style
-
-// function updateFontStyleAddress() {
-//     const fontStyle = document.getElementById('addressfont-style1').value;
-
-//     // Check if a text object with class 'businessText' already exists
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'addressText');
-
-//     if (existingText) {
-//         let fontWeight = 'normal';
-//         let fontStyleValue = 'normal';
-//         let underline = false;
-
-//         // Check the selected font style and update the corresponding properties
-//         if (fontStyle.includes('bold')) {
-//             fontWeight = 'bold';
-//         }
-//         if (fontStyle.includes('italic')) {
-//             fontStyleValue = 'italic';
-//         }
-//         if (fontStyle === 'underline') {
-//             underline = true;
-//         }
-
-//         // Update the style properties of the existing text object
-//         existingText.set({
-//             fontWeight: fontWeight,
-//             fontStyle: fontStyleValue,
-//             underline: underline
-//         });
-
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     }
-// }
-
-// document.getElementById('addressfont-style1').addEventListener('change', updateFontStyleAddress);
 
 // Utility to toggle a style property on the 'addressText' object
 // Toggle function for font styles
@@ -1739,30 +1543,7 @@ function updatePromotionImage(src, maxWidth = 175, maxHeight = 175) {
             canvas.renderAll();
           });
         } else {
-          // If the logo doesn't exist, create a new one
-          // fabric.Image.fromURL(base64Image, function (img) {
-          //     // Calculate the scale based on maxWidth and maxHeight while preserving aspect ratio
-          //     const imgWidth = img.width;
-          //     const imgHeight = img.height;
-          //     let scaleX = 1;
-          //     let scaleY = 1;
-          //     if (imgWidth > maxWidth || imgHeight > maxHeight) {
-          //         const widthRatio = maxWidth / imgWidth;
-          //         const heightRatio = maxHeight / imgHeight;
-          //         const scaleRatio = Math.min(widthRatio, heightRatio); // Maintain aspect ratio
-          //         scaleX = scaleY = scaleRatio;
-          //     }
-          //     img.set({
-          //         scaleX: scaleX, // Adjusted scale
-          //         scaleY: scaleY, // Adjusted scale
-          //         hasControls: true,
-          //         hasBorders: true,
-          //         className: 'promotionImage'
-          //     });
-          //     // Add the new image to the canvas
-          //     canvas.add(img);
-          //     canvas.renderAll();
-          // });
+         
         }
       };
 
@@ -2019,20 +1800,6 @@ qrImageUploadSection.addEventListener("drop", function (event) {
   }
 });
 
-// function resizeCanvas() {
-//     const outerCanvasContainer = document.querySelector('.rightsection')[0];
-
-//     const ratio = canvas.getWidth() / canvas.getHeight();
-//     const containerWidth   = outerCanvasContainer.clientWidth;
-//     const containerHeight  = outerCanvasContainer.clientHeight;
-
-//     const scale = containerWidth / canvas.getWidth();
-//     const zoom  = canvas.getZoom() * scale;
-//     canvas.setDimensions({width: containerWidth, height: containerWidth / ratio});
-//     canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-// }
-
-// resizeCanvas();
 
 // ****************************************** qr image code ends here ******************************************************
 
@@ -2042,219 +1809,6 @@ let isRepositioning = false; // Flag to prevent repeated alerts and infinite loo
 
 let previousAngle = null; // Store the previous angle value
 
-// canvas.on('object:modified', function (event) {
-//     const obj = event.target;
-
-//     // Check if the angle has changed (indicating rotation)
-//     if (obj.angle !== previousAngle) {
-//         // Only proceed if rotation has occurred
-//         console.log('Object was rotated.');
-
-//         // Update the coordinates after rotation
-//         obj.setCoords();
-
-//         // Store the new angle as previousAngle for the next modification
-//         previousAngle = obj.angle;
-
-//         // Handle specific objects, e.g., businessText
-//         if (obj.className == 'businessText') {
-//             textProperties = {
-//                 top: obj.top,
-//                 left: obj.left
-//             };
-//         }
-//         else if (obj.className == 'logo') {
-//             logoProperties = {
-//                 top: obj.top,
-//                 left: obj.left
-//             };
-//         }
-//         else if (obj.className == 'qrImage') {
-//             qrProperties = {
-//                 top: obj.top,
-//                 left: obj.left
-//             };
-//         }
-//         else if (obj.className == 'promotionImage') {
-//             imageProperties = {
-//                 top: obj.top,
-//                 left: obj.left
-//             };
-//         }
-//         else if (obj.className == 'addressText') {
-//             addressProperties = {
-//                 top: obj.top,
-//                 left: obj.left
-//             };
-//         }
-//     }
-//     else {
-//         // console.log("Some other modification (not rotation) was made.");
-//         if (isRepositioning) return; // Prevent re-triggering during repositioning
-
-//         const obj = event.target;
-//         obj.setCoords()
-//         const canvasWidth = canvas.width;
-//         const canvasHeight = canvas.height;
-
-//         // Calculate object boundaries considering scale
-//         const boundingRect = obj.getBoundingRect();
-
-//          const left = boundingRect.left;
-//         const top = boundingRect.top;
-//         const right = left + boundingRect.width;
-//         const bottom = top + boundingRect.height;
-
-//         // Apply different edge thresholds for left and right for 'secondTwo' pattern
-
-//         // Check if object is near or outside the canvas boundaries
-//         const isOutOfBounds =
-//             (left < 0 || right > canvasWidth || top < 0 || bottom > canvasHeight);
-
-//         if (isOutOfBounds) {
-//             isRepositioning = true;
-
-//             // Reposition the object based on its stored properties
-//             if (obj.className === 'businessText') {
-//                 let textProps = textProperties;
-//                 // alert("Company text was too close to the edges and moved")
-//                 obj.animate({ left: textProps.left, top: textProps.top },
-//                     {
-//                         duration: 500,
-//                         onChange: canvas.renderAll.bind(canvas),
-//                         onComplete: function () {
-//                             canvas.discardActiveObject();
-//                             canvas.renderAll();
-
-//                             // Re-enable moving after animation
-//                             setTimeout(() => {
-//                                 isRepositioning = false;
-
-//                             }, 100);
-//                         }
-//                     }
-//                 );
-//             }
-
-//             if (obj.className === 'logo') {
-//                 let logoProps = logoProperties;
-//                 // alert("Logo too was close to the edges and moved")
-//                 obj.animate({ left: logoProps.left, top: logoProps.top },
-//                     {
-//                         duration: 500,
-//                         onChange: canvas.renderAll.bind(canvas),
-//                         onComplete: function () {
-//                             canvas.discardActiveObject();
-//                             canvas.renderAll();
-
-//                             // Re-enable moving after animation
-//                             setTimeout(() => {
-//                                 isRepositioning = false;
-
-//                             }, 100);
-//                         }
-//                     }
-//                 );
-//             }
-
-//             if (obj.className === 'qrImage') {
-//                 let qrProps = qrProperties;
-//                 // alert("QR Image was too close to the edges and moved")
-//                 obj.animate({ left: qrProps.left, top: qrProps.top },
-//                     {
-//                         duration: 500,
-//                         onChange: canvas.renderAll.bind(canvas),
-//                         onComplete: function () {
-//                             canvas.discardActiveObject();
-//                             canvas.renderAll();
-
-//                             // Re-enable moving after animation
-//                             setTimeout(() => {
-//                                 isRepositioning = false;
-
-//                             }, 100);
-//                         }
-//                     }
-//                 );
-//             }
-
-//             if (obj.className === 'promotionImage') {
-//                 let imageProps = imageProperties;
-//                 // alert("Promotion was too close to the edges and moved")
-//                 obj.animate({ left: imageProps.left, top: imageProps.top },
-//                     {
-//                         duration: 500,
-//                         onChange: canvas.renderAll.bind(canvas),
-//                         onComplete: function () {
-//                             canvas.discardActiveObject();
-//                             canvas.renderAll();
-
-//                             // Re-enable moving after animation
-//                             setTimeout(() => {
-//                                 isRepositioning = false;
-
-//                             }, 100);
-//                         }
-//                     }
-//                 );
-//             }
-
-//             if (obj.className === 'addressText') {
-//                 let addressProps = addressProperties;
-//                 // alert("Address was text too close to the edges and moved")
-//                 obj.animate({ left: addressProps.left, top: addressProps.top },
-//                     {
-//                         duration: 500,
-//                         onChange: canvas.renderAll.bind(canvas),
-//                         onComplete: function () {
-//                             canvas.discardActiveObject();
-//                             canvas.renderAll();
-
-//                             // Re-enable moving after animation
-//                             setTimeout(() => {
-//                                 isRepositioning = false;
-
-//                             }, 100);
-//                         }
-//                     }
-//                 );
-//             }
-
-//             // Re-render the canvas after making the position adjustments
-//             canvas.renderAll();
-//             isRepositioning = false; // Reset the flag after repositioning
-
-//             setTimeout(() => {
-//                 let alertMessage;
-
-//                 if (obj.className == 'businessText') {
-//                     alertMessage = 'Company text was too close to the edge and has been moved to the center.';
-//                 }
-//                 else if (obj.className == 'logo') {
-//                     alertMessage = 'Logo was too close to the edge and has been moved.';
-//                 }
-//                 else if (obj.className == 'qrImage') {
-//                     alertMessage = 'QR Image was too close to the edge and has been moved.';
-//                 }
-//                 else if (obj.className == 'promotionImage') {
-//                     alertMessage = 'Promotion Image was too close to the edge and has been moved.';
-//                 }
-//                 else if (obj.className == 'addressText') {
-//                     alertMessage = 'Address text was too close to the edge and has been moved.';
-//                 }
-//                 else {
-//                     alertMessage = `${obj.className || 'Object'} was too close to the edge and has been moved to the center.`;
-//                 }
-
-//                 showCustomAlert(alertMessage, false, 1500);
-//             }, 100);
-
-//         }
-//     }
-
-//     // Re-render the canvas
-//     canvas.renderAll();
-// });
 
 canvas.on("object:moving", function (event) {
   if (isRepositioning) return; // Prevent re-triggering during repositioning
@@ -2919,123 +2473,6 @@ function screenshotFunction() {
 
 // ************************************************************************ Custom Dropdown **********************************************************************************
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const dropdownButton = document.getElementById('dropdownButton');
-//     const dropdownMenu = document.getElementById('dropdownMenu');
-//     const fontImageContainer = document.getElementById('fontImageContainer');
-//     const dropdownArrow = document.querySelector('.dropdown-arrow');
-
-//     const fontImages = {
-//         "Nature Beauty": "./assets/images/fonts/Nature Beauty.png",
-//         "Datacron": "./assets/images/fonts/Datacron.png",
-//         "Fonarto": "./assets/images/fonts/Fonarto.png",
-//         "Balloon": "./assets/images/fonts/Balloon.png",
-//         "Edo": "./assets/images/fonts/Edo.png",
-//         "Jumping Chick": "./assets/images/fonts/Jumping Chick.png",
-//         "Boogie Boys": "./assets/images/fonts/Boogie Boys.png",
-//         "Sunny Spells": "./assets/images/fonts/Sunny Spells.png",
-//         "Merienda": "./assets/images/fonts/Merienda.png",
-//         "Good Times": "./assets/images/fonts/Good Times.png",
-//         "Scarytale": "./assets/images/fonts/Scarytale.png",
-//         "Alro": "./assets/images/fonts/Alro.png",
-//         "Blade rounded": "./assets/images/fonts/Blade rounded.png",
-//         "Airstrike Academy": "./assets/images/fonts/Airstrike.png",
-//         "Race Sport": "./assets/images/fonts/Race Sport.png",
-//         "HalvettBlackCond": "./assets/images/fonts/HalvettBlackCond.png",
-//         "AGRevueCyr-Roman": "./assets/images/fonts/AGRevueCyr-Roman.png",
-//         "Aestera": "./assets/images/fonts/Aestera.png",
-//         "Agraham": "./assets/images/fonts/Agraham.png",
-//         "AL_Nevrada": "./assets/images/fonts/AL_Nevrada.png",
-//         "BalapDemo": "./assets/images/fonts/BalapDemo.png",
-//         "Bangkok": "./assets/images/fonts/Bangkok.png",
-//         "Basmala": "./assets/images/fonts/Basmala.png",
-//         "Battlesbridge Demo": "./assets/images/fonts/Battlesbridge Demo.png",
-//         "Berdano": "./assets/images/fonts/Berdano.png",
-//         "Catchland": "./assets/images/fonts/Catchland.png",
-//         "Firlest": "./assets/images/fonts/Firlest.png",
-//         "Rekalgera": "./assets/images/fonts/Rekalgera.png",
-//         "Slugs Racer": "./assets/images/fonts/Slugs Racer.png",
-//         "The Richland": "./assets/images/fonts/The Richland.png",
-//     };
-
-//     // Toggle dropdown visibility
-//     dropdownButton.addEventListener('click', function () {
-//         const isOpen = dropdownMenu.style.display === 'block';
-//         dropdownMenu.style.display = isOpen ? 'none' : 'block';
-//     });
-
-//     // Hover over dropdown options to show the image near the mouse
-//     dropdownMenu.addEventListener('mouseover', function (event) {
-//         if (event.target.classList.contains('dropdown-option')) {
-//             const font = event.target.getAttribute('data-font');
-//             showFontImage(font, event.clientX, event.clientY);
-//         }
-//     });
-
-//     // Hide the image when the mouse leaves the options
-//     dropdownMenu.addEventListener('mouseout', function () {
-//         hideFontImage();
-//     });
-
-//     // Select a font when an option is clicked
-//     dropdownMenu.addEventListener('click', function (event) {
-//         if (event.target.classList.contains('dropdown-option')) {
-//             const selectedFont = event.target.getAttribute('data-font');
-//             const selectedFontPath = event.target.getAttribute('data-font-path');
-//             const selectedFontNo = event.target.getAttribute('data-font-no');
-//             dropdownButton.innerHTML = `${selectedFont} <i class="fa-solid fa-chevron-down"></i>`;
-//             dropdownButton.setAttribute('font-path', selectedFontPath) // Update button text with selected font
-//             dropdownMenu.style.display = 'none'; // Close the dropdown after selection
-//             // Reset background color of all options to transparent
-//             const allOptions = dropdownMenu.querySelectorAll('.dropdown-option');
-//             allOptions.forEach(option => {
-//                 option.style.backgroundColor = ''; // Reset to default background (transparent or white)
-//             });
-
-//             // Set background color of the selected option to #f1f1f1
-//             event.target.style.backgroundColor = '#f1f1f1';
-//             updateFontFamilyCustom(selectedFontPath, selectedFontNo);
-//             hideFontImage(); // Hide the image after selection
-//         }
-//     });
-
-//     // Show font image near the mouse cursor
-//     function showFontImage(font, mouseX, mouseY) {
-//         const img = document.createElement('img');
-//         img.src = fontImages[font];
-//         fontImageContainer.innerHTML = ''; // Clear previous image
-//         fontImageContainer.appendChild(img);
-
-//         // Show the image and position it near the mouse
-//         fontImageContainer.style.display = 'block';
-//         fontImageContainer.style.left = `${mouseX + 10}px`; // Position slightly to the right of the cursor
-//         fontImageContainer.style.top = `${mouseY + 10}px`; // Position slightly below the cursor
-//     }
-
-//     // Hide font image
-//     function hideFontImage() {
-//         fontImageContainer.style.display = 'none';
-//     }
-//     // Initialize custom text when the page loads
-// // addCustomText('Your Custom Text', '#000000ff', 16);
-// });
-
-// ************************************************************************************** End of Custom dropdown *****************************************************************************
-
-// ************************************************************************************ GET LABEL PNG *********************************************************************
-
-// document.getElementById('exportPNG').addEventListener("click", function () {
-//     const imgData = canvas.toDataURL({
-//         format: 'png',
-//         multiplier: 10
-//     });
-//     const a = document.createElement('a');
-//     a.href = imgData;
-//     a.download = "image.png";
-//     a.click();
-
-// });
-
 // ************************************************************************************ End of get label png ************************************************************************
 
 const closeButton = document.querySelector(".close-button-signup");
@@ -3147,45 +2584,6 @@ $(".backgroundChangeButtons").click(function () {
   }
 });
 
-// console.log(`my windows screen width: ${window.innerWidth}`);
-// console.log(`my windows screen height: ${window.innerHeight}`);
-
-// ---------------------------customtext--------------------
-
-// function updateFontStyleCustomText() {
-
-//     const fontStyle = document.getElementById('customTextfont-style1').value;
-
-//     // Check if a text object with class 'businessText' already exists
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'customTextText');
-
-//     if (existingText) {
-//         let fontWeight = 'normal';
-//         let fontStyleValue = 'normal';
-//         let underline = false;
-
-//         // Check the selected font style and update the corresponding properties
-//         if (fontStyle.includes('bold')) {
-//             fontWeight = 'bold';
-//         }
-//         if (fontStyle.includes('italic')) {
-//             fontStyleValue = 'italic';
-//         }
-//         if (fontStyle === 'underline') {
-//             underline = true;
-//         }
-
-//         // Update the style properties of the existing text object
-//         existingText.set({
-//             fontWeight: fontWeight,
-//             fontStyle: fontStyleValue,
-//             underline: underline
-//         });
-
-//         // Re-render the canvas after updating the object
-//         canvas.renderAll();
-//     }
-// }
 
 function toggleCustomTextStyle(styleType) {
   const activeObject = canvas.getActiveObject();
@@ -3384,60 +2782,6 @@ if (fontSizeInputCustomText) {
 
 // ********************************************** Custom Text Implementation **********************************************
 
-// First, add the custom text to template items function
-// function addCustomText(textContent, color, baseFontSize = 16) {
-//     // Check if a text object with class 'customTextText' already exists
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'customTextText');
-
-//     // Get canvas width and height
-//     const canvasWidth = canvas.getWidth();
-//     const canvasHeight = canvas.getHeight();
-
-//     // Get window width for responsive design
-//     const windowWidth = window.innerWidth;
-//     const windowHeight = window.innerHeight;
-
-//     // Initialize fontSizeValue and position values
-//     let fontSizeValue = baseFontSize;
-//     let topPercentage = 0.1;  // Default 10% from the top of the canvas
-//     let leftPercentage = 0.1; // Default 10% from the left of the canvas
-
-//     // Set positioning for custom text (between company name and address)
-//     fontSizeValue = baseFontSize * 0.25;
-//     topPercentage = 1.5; // Position between company name and address
-//     leftPercentage = 0.68;
-
-//     // Calculate top and left position based on percentage of canvas dimensions
-//     const top = canvasHeight * topPercentage;
-//     const left = canvasWidth * leftPercentage;
-
-//     // Create the text object with calculated font size and positions
-//     const text = new fabric.Text(textContent, {
-//         left: left,
-//         top: top,
-//         fill: color,
-//         fontSize: fontSizeValue,
-//         fontFamily: 'Arial',
-//         className: 'customTextText',
-//     });
-
-//     if (existingText) {
-//         existingText.set({
-//             text: textContent,
-//             fill: color,
-//         });
-//         canvas.renderAll();
-//     } else {
-//         canvas.add(text);
-//         canvas.renderAll();
-//     }
-
-//     // Store properties for boundary checking
-//     customTextProperties = {
-//         top: text.top,
-//         left: text.left
-//     };
-// }
 
 function addCustomText(textContent, color, baseFontSize = 16) {
   const existingText = canvas
@@ -3582,34 +2926,6 @@ function updateFontFamilyCustomText() {
   }
 }
 
-// Font style update for custom text
-// function updateFontStyleCustomText() {
-//     const fontStyle = document.getElementById('customTextfont-style1').value;
-//     const existingText = canvas.getObjects().find(obj => obj.className === 'customTextText');
-
-//     if (existingText) {
-//         let fontWeight = 'normal';
-//         let fontStyleValue = 'normal';
-//         let underline = false;
-
-//         if (fontStyle.includes('bold')) {
-//             fontWeight = 'bold';
-//         }
-//         if (fontStyle.includes('italic')) {
-//             fontStyleValue = 'italic';
-//         }
-//         if (fontStyle === 'underline') {
-//             underline = true;
-//         }
-
-//         existingText.set({
-//             fontWeight: fontWeight,
-//             fontStyle: fontStyleValue,
-//             underline: underline
-//         });
-//         canvas.renderAll();
-//     }
-// }
 
 // Text alignment for custom text
 function updateTextAlignmentCustomText(alignment) {
@@ -3654,112 +2970,6 @@ function updateFontSizeCustomText(fontSize) {
 }
 
 // ********************************************** Event Listeners Setup **********************************************
-
-// // Add event listeners after DOM is loaded
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Create custom text area if it doesn't exist
-//     const customTextArea = document.getElementById('customTextArea');
-//     if (!customTextArea) {
-//         console.error('Custom text area with ID "customTextArea" not found. Please add it to your HTML.');
-//         return;
-//     }
-
-//     // Listen for input changes in the custom text area
-//     customTextArea.addEventListener('input', updateCustomTextContent);
-
-//     // Font family change listener
-//     const customTextFontFamily = document.getElementById('customTextFont-family1');
-//     if (customTextFontFamily) {
-//         customTextFontFamily.addEventListener('change', updateFontFamilyCustomText);
-//     }
-
-//     // Font style change listener
-//     const customTextFontStyle = document.getElementById('customTextfont-style1');
-//     if (customTextFontStyle) {
-//         customTextFontStyle.addEventListener('change', updateFontStyleCustomText);
-//     }
-
-//     // Color picker listener
-//     const customTextColorPicker = document.getElementById('customText-color-picker1');
-//     if (customTextColorPicker) {
-//         customTextColorPicker.addEventListener('input', function() {
-//             const selectedColor = customTextColorPicker.value;
-//             updateTextColorCustomText(selectedColor);
-//         });
-//     }
-
-//     // Font size input listener
-//     const customTextFontSizeInput = document.getElementById('customTextnumberInput1');
-//     if (customTextFontSizeInput) {
-//         customTextFontSizeInput.addEventListener('input', function() {
-//             const newFontSize = parseInt(customTextFontSizeInput.value, 10);
-//             updateFontSizeCustomText(newFontSize);
-//         });
-//     }
-
-//     // // Alignment icons listeners
-//     // const customTextAlignmentIcons = document.querySelectorAll('.customTextalignment1 .alignment-icon');
-//     // customTextAlignmentIcons.forEach(icon => {
-//     //     icon.addEventListener('click', function() {
-//     //         customTextAlignmentIcons.forEach(item => item.classList.remove('selected'));
-//     //         this.classList.add('selected');
-
-//     //         if (this.id === 'left-align') {
-//     //             updateTextAlignmentCustomText('left');
-//     //         } else if (this.id === 'center-align') {
-//     //             updateTextAlignmentCustomText('center');
-//     //         } else if (this.id === 'right-align') {
-//     //             updateTextAlignmentCustomText('right');
-//     //         } else if (this.id === 'tidyup-align') {
-//     //             updateTextAlignmentCustomText('justify');
-//     //         }
-//     //     });
-//     // });
-//     // Alignment icons listeners for custom text
-// const customTextAlignmentIcons = document.querySelectorAll('.customTextalignment1 .alignment-icon');
-// customTextAlignmentIcons.forEach(icon => {
-//     icon.addEventListener('click', function() {
-//         customTextAlignmentIcons.forEach(item => item.classList.remove('selected'));
-//         this.classList.add('selected');
-
-//         if (this.id === 'customText-left-align') {
-//             updateTextAlignmentCustomText('left');
-//         } else if (this.id === 'customText-center-align') {
-//             updateTextAlignmentCustomText('center');
-//         } else if (this.id === 'customText-right-align') {
-//             updateTextAlignmentCustomText('right');
-//         } else if (this.id === 'customText-tidyup-align') {
-//             updateTextAlignmentCustomText('justify');
-//         }
-//     });
-// });
-
-//     // Initialize custom text when the page loads
-//     updateCustomTextContent();
-// });
-
-// ********************************************** Update Object Movement Constraints **********************************************
-
-// Add custom text to the object movement constraint system
-// Update the existing canvas.on('object:modified') function to include custom text handling
-
-// Add this to your existing object:modified event handler:
-// function handleCustomTextConstraints(obj) {
-//     if (obj.className === 'customTextText') {
-//         let customTextProps = customTextProperties;
-//         obj.animate({ left: customTextProps.left, top: customTextProps.top }, {
-//             duration: 500,
-//             onChange: canvas.renderAll.bind(canvas),
-//             onComplete: function () {
-//                 canvas.discardActiveObject();
-//                 canvas.renderAll();
-//                 setTimeout(() => {
-//                     isRepositioning = false;
-//                 }, 100);
-//             }
-//         });
-//     }
-// }
 
 canvas.on("object:modified", function (event) {
   const obj = event.target;
@@ -3836,32 +3046,9 @@ canvas.on("object:modified", function (event) {
     }
   }
 
-  //     if (obj.className === 'customTextText') {
-  //     let customTextProps = customTextProperties;
-  //     obj.animate({ left: customTextProps.left, top: customTextProps.top }, {
-  //         duration: 500,
-  //         onChange: canvas.renderAll.bind(canvas),
-  //         onComplete: function () {
-  //             canvas.discardActiveObject();
-  //             canvas.renderAll();
-  //             setTimeout(() => {
-  //                 isRepositioning = false;
-  //             }, 100);
-  //         }
-  //     });
-
-  //     setTimeout(() => {
-  //         showCustomAlert('Custom text was too close to the edge and has been moved.', false, 1500);
-  //     }, 100);
-  // }
   canvas.renderAll();
 });
 
-// Add this case in your existing object:modified event handler
-
-// Make sure to call addCustomText in your template initialization
-// Replace your existing addTemplateItems call with:
-// addTemplateItemsWithCustomText(1); // or whatever template number you want to start with
 
 document.addEventListener("DOMContentLoaded", function () {
   const dropdownButton = document.getElementById("dropdownButton");
