@@ -93,6 +93,9 @@ function createTemplates(chosenModel) {
   if (chosenCurrentModel.includes('120') && chosenModel == 'sipper')  {
     newModel = `120_${chosenModel}`;
   }
+  if (chosenCurrentModel.includes('350') && chosenModel == 'sipper')  {
+    newModel = `350_${chosenModel}`;
+  }
   templateContainer.innerHTML = `
     <img src="./assets/images/images/default_${newModel}.png" alt="template1" title="template1"
         loading="eager" width="5%" height="auto" class="template-image selected" id="template1"
