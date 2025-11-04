@@ -143,6 +143,48 @@ const categories = [
   },
 ];
 
+document.addEventListener("DOMContentLoaded", async () => {
+  await preloadAllModels(categories);
+  console.log("✅ All models preloaded!");
+});
+
+// ---- Step 1: Preload all models and replace their src with blob URLs
+async function preloadAllModels(categories) {
+  const promises = [];
+
+  for (const category of categories) {
+    for (const model of category.models) {
+      const preloadOne = async (key, url) => {
+        if (!url) return;
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const blob = await res.blob();
+          model[key] = URL.createObjectURL(blob);
+        } catch (err) {
+          console.warn(`❌ Failed to preload ${url}`, err);
+        }
+      };
+
+      // Original (normal) model
+      promises.push(preloadOne("preloadedSrc", model.src));
+
+      // Auto-generate “without_logo” variant URL if applicable
+      const logoVariant = model.src.replace(
+        /(glb\/)(round|rectangle|sipper)\//,
+        "$1without_logo/$2/"
+      );
+      promises.push(preloadOne("preloadedLogoSrc", logoVariant));
+    }
+  }
+
+  await Promise.all(promises);
+  console.log("✅ All models preloaded.");
+}
+
+let currentModel = null;
+
+
 let currentCategory = 0;
 let selectedModel = 0;
 let selectedPattern = 0;
@@ -238,7 +280,12 @@ function selectModel(modelIndex) {
 
   // Update model viewer (placeholder for actual GLB loading)
   const placeholder = document.getElementById("modelPlaceholder");
-  placeholder.innerHTML = `<model-viewer src="${model.src}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%; scale: ${model.scale}" id="viewer" disable-tap disable-pan disable-zoom   interaction-prompt="none"></model-viewer>`;
+
+  const viewerSrc = model.preloadedSrc || model.src; 
+
+  placeholder.innerHTML = `<model-viewer src="${viewerSrc}" alt="${model.name}" auto-rotate camera-controls style="width: 100%; height: 100%; scale: ${model.scale}" id="viewer" disable-tap disable-pan disable-zoom   interaction-prompt="none"></model-viewer>`;
+
+  currentModel = model;
 }
 
 // Select pattern
@@ -1190,8 +1237,9 @@ function selectModel(modelIndex) {
 
   // Update model viewer
   const placeholder = document.getElementById("modelPlaceholder");
+  const viewerSrc = model.preloadedSrc || model.src; 
   placeholder.innerHTML = `<model-viewer 
-        src="${model.src}" 
+        src="${viewerSrc}" 
         alt="${model.name}" 
         auto-rotate 
         camera-controls 
@@ -1220,6 +1268,8 @@ function selectModel(modelIndex) {
       );
     }
   }, 100);
+
+  currentModel = model;
 }
 
 function colorChangeFunction(v_) {
@@ -1502,18 +1552,33 @@ uploadButton.addEventListener("click", () => {
 
 function changeToLogoModel() {
   const modelViewer = document.querySelector("model-viewer");
+
+  if (!currentModel) {
+    console.warn("⚠️ No model currently selected.");
+    return;
+  }
+
   const currentSrc = modelViewer.src;
 
-  if (!currentSrc.includes("without_logo")) return;
+  // Because modelViewer.src becomes an absolute URL, normalize it
+  // to a relative path for easier comparison
+  const relativeSrc = currentSrc.replace(window.location.origin + "/", "");
 
-  // Use regex to insert '/without_logo' before 'round/' or 'rectangle/'
-  const originalSrc = currentSrc.replace(/(glb\/)without_logo\//, "$1");
+  // Detect whether it's currently showing the without_logo version
+  const isLogoShown = !relativeSrc.includes("/without_logo/");
 
-  console.log("New src:", originalSrc);
+  // Compute the alternate src
+  const nextSrc = isLogoShown
+    ? relativeSrc.replace(/(glb\/)(round|rectangle|sipper)\//, "$1without_logo/$2/")
+    : relativeSrc.replace(/(glb\/)without_logo\//, "$1");
 
-  // Apply the new source
-  modelViewer.src = originalSrc;
+    console.log(`Model src now: ${nextSrc}`);
+  // Apply the new model path
+  modelViewer.src = nextSrc;
+
+  console.log(`✅ Switched to ${isLogoShown ? "without logo" : "original"} model`);
 }
+
 
 let global_logo_file = "";
 // When file is selected

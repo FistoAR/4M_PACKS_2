@@ -213,45 +213,75 @@ function adjustTextProperties() {
   if (hasTextBeenAligned) return;
   console.log(`Text has not been centralised`)
 
-  // ✅ Skip for special model cases
-  if (
-    (chosenCurrentModel.includes('120') && chosenModel == 'sipper') ||
-    (chosenCurrentModel.includes('500') && chosenModel == 'round') ||
-    (chosenCurrentModel.includes('750') && chosenModel == 'round') || 
-    (chosenModel == 'round')
-  ) {
-    console.log("Skipping auto-centering for special model cases");
-    return;
-  }
-
-  // ✅ Now realign the company name text
-  const canvasWidth = canvas.getWidth();
-  console.log(`canvas width: ${canvasWidth}`);
-  
+    const canvasWidth = canvas.getWidth();
+    const canvasHeight = canvas.getHeight();
 
   const businessText = canvas.getObjects().find((obj) => obj.className === "businessText");
 
+  const topV = canvasHeight / 2;
+  console.log(`Top value round & sipper: ${topV}`);
+
+
   if (businessText) {
     businessText.set({
-      left: canvasWidth / 2,
+      top: topV,
+      ...(chosenModel == "round" || (chosenModel === 'sipper' && chosenCurrentModel.includes('120'))
+  ? {}
+  : { left: canvasWidth / 2 }),
       originX: 'center',
-      textAlign: 'center',
+      originY: 'bottom',   
+      hasControls: true,
+      hasBorders: true,
+      selectable: true,
+      isDelete: false,
+      evented: true
+      
     });
   }
 
+  let topValue = 0;
+  const reducedHeight = canvasHeight - 75;
+  topValue = reducedHeight;
+
+  if (chosenModel == "round") {
+    topValue = topV;
+  }
+
+  if ((chosenModel == 'sipper') && chosenCurrentModel.includes('120')) {
+    topValue = topV;
+  }
+
+  console.log(`Top value round & sipper: ${topValue}`);
+  
   // (Optional) If you also want to center the address text:
   const addressText = canvas.getObjects().find((obj) => obj.className === "addressText");
   if (addressText) {
     addressText.set({
-      left: canvasWidth / 2,
+      top: topValue,
+     ...(chosenModel == "round" || (chosenModel === 'sipper' && chosenCurrentModel.includes('120'))
+  ? {}
+  : { left: canvasWidth / 2 }),
+
       originX: 'center',
-      textAlign: 'center',
+      originY: 'bottom',   
+      hasControls: true,
+      hasBorders: true,
+      selectable: true,
+      isDelete: false,
+      evented: true,
     });
   }
 
+   if (
+      (chosenCurrentModel.includes('120') && chosenModel == 'sipper') || 
+      chosenModel == 'round'
+    ) {
+
+    }
+
   // ✅ Render after updating positions
   canvas.renderAll();
-
+  
   // ✅ Mark as aligned
   hasTextBeenAligned = true;
   console.log("Company name and address text have been horizontally centered.");
@@ -311,7 +341,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       ); // Example
-      addText("Your Company Name", "#000000ff", 60, 100, 16);
+      addText("Your Company Name", "#000000ff", 60, 100, 12);
       addAddressText("Your Address Here", "#070707ff", 55, 580, 18);
       break;
     case 2:
@@ -323,7 +353,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       ); // Example
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
     case 3:
@@ -335,7 +365,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
     case 4:
@@ -347,7 +377,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
     case 5:
@@ -359,7 +389,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#000000", 60, 100, 16);
+      addText("Your Company Name", "#000000", 60, 100, 12);
       addAddressText("Your Address Here", "#yourLogoWhite", 55, 580, 18);
       break;
     case 6:
@@ -371,7 +401,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
     case 7:
@@ -383,7 +413,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
     case 8:
@@ -395,7 +425,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#000000", 60, 100, 16);
+      addText("Your Company Name", "#000000", 60, 100, 12);
       addAddressText("Your Address Here", "#yourLogoWhite", 55, 580, 18);
       break;
     default:
@@ -407,7 +437,7 @@ function addTemplateItems(templateNumber) {
         7,
         100
       );
-      addText("Your Company Name", "#FFFFFF", 60, 100, 16);
+      addText("Your Company Name", "#FFFFFF", 60, 100, 12);
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
   }
@@ -522,7 +552,7 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
     });
 }
 
-function addText(textContent, color, baseFontSize = 16) {
+function addText(textContent, color, baseFontSize = 12) {
   // Check if a text object with class 'businessText' already exists
   const existingText = canvas.getObjects() .find((obj) => obj.className === "businessText");
 
@@ -616,14 +646,14 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
     bottomOffset = 2.75;
   }
 
-  if (chosenModel == 'rectangle') {
-    
-  }
+  
   
   
 
   const bottom = (canvasHeight * bottomOffset) / 10; // Adjust the bottom percentage to fit canvas height
   const top = canvasHeight - bottom; // Set the top position relative to the bottom
+
+ 
 
   // Calculate left position
   let left = canvasWidth * leftPercentage;
@@ -1096,6 +1126,7 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
                 hasControls: true,
                 hasBorders: true,
                 selectable: true,
+                isDelete: false,
                 evented: true,
                 className: "logo",
               });
