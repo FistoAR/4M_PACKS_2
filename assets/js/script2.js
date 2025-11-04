@@ -615,6 +615,10 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
     leftPercentage = 2.5;
     bottomOffset = 2.75;
   }
+
+  if (chosenModel == 'rectangle') {
+    
+  }
   
   
 
@@ -624,18 +628,6 @@ function addAddressText(textContent, color, left1, top1, baseFontSize = 16) {
   // Calculate left position
   let left = canvasWidth * leftPercentage;
   console.log(`Left value before if: ${left}`);
-
-// if (chosenModel !== "round") {
-//   const windowWidth = window.innerWidth;
-
-//   // Set a max width based on window size (optional)
-//   let finalMaxWidth = 50; // default
-//   if (windowWidth <= 320) finalMaxWidth = 75;
-//   else if (windowWidth <= 1024) finalMaxWidth = 75;
-
-//   // We'll center using Fabric.js properties instead of manual math
-//   left = canvasWidth * 1.4;
-// }
 
 
 console.log(`Value of left: ${left}`);
