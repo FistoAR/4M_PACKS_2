@@ -881,9 +881,9 @@ input[type="color"] {
     font-family: "Quicksand";
     font-size: 14px;
     font-style: "Semibold";
-    color: #323232;
+    color: #000000;
     padding: 8px;
-    /* font-weight: 700; */
+    font-weight: 600;
    
     border-radius: 10px;
     width: 100%;

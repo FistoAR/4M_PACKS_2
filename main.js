@@ -1204,6 +1204,8 @@ function selectModel(modelIndex) {
         >
     </model-viewer>`;
 
+    zoomLevel = 1;
+
   // Wait for model-viewer to be created, then apply pattern
   setTimeout(() => {
     const newModelViewer = document.querySelector("model-viewer");

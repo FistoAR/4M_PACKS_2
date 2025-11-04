@@ -1,6 +1,8 @@
 const canvas = new fabric.Canvas("canvas", { selection: false });
 
 let storedBackgroundImageURL = null;
+let hasTextBeenAligned = false; // ✅ global flag to prevent multiple alignments
+
 let tapColor = "#FF0000";
 
 const history = [];
@@ -187,6 +189,7 @@ function createTemplates(chosenModel) {
 }
 
 
+
 function setBackgroundImage(url, booleanValue) {
   fabric.Image.fromURL(url, (img) => {
     adjustCanvasSize(img);
@@ -199,8 +202,60 @@ function setBackgroundImage(url, booleanValue) {
     });
     saveState();
   });
+
+  setTimeout(() => {
+    adjustTextProperties();
+  }, 500);
 }
 
+function adjustTextProperties() {
+  // ✅ Ensure we only run this logic once after first background change
+  if (hasTextBeenAligned) return;
+  console.log(`Text has not been centralised`)
+
+  // ✅ Skip for special model cases
+  if (
+    (chosenCurrentModel.includes('120') && chosenModel == 'sipper') ||
+    (chosenCurrentModel.includes('500') && chosenModel == 'round') ||
+    (chosenCurrentModel.includes('750') && chosenModel == 'round') || 
+    (chosenModel == 'round')
+  ) {
+    console.log("Skipping auto-centering for special model cases");
+    return;
+  }
+
+  // ✅ Now realign the company name text
+  const canvasWidth = canvas.getWidth();
+  console.log(`canvas width: ${canvasWidth}`);
+  
+
+  const businessText = canvas.getObjects().find((obj) => obj.className === "businessText");
+
+  if (businessText) {
+    businessText.set({
+      left: canvasWidth / 2,
+      originX: 'center',
+      textAlign: 'center',
+    });
+  }
+
+  // (Optional) If you also want to center the address text:
+  const addressText = canvas.getObjects().find((obj) => obj.className === "addressText");
+  if (addressText) {
+    addressText.set({
+      left: canvasWidth / 2,
+      originX: 'center',
+      textAlign: 'center',
+    });
+  }
+
+  // ✅ Render after updating positions
+  canvas.renderAll();
+
+  // ✅ Mark as aligned
+  hasTextBeenAligned = true;
+  console.log("Company name and address text have been horizontally centered.");
+}
 
 function saveState() {
   const json = JSON.stringify({
@@ -469,22 +524,14 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
 
 function addText(textContent, color, baseFontSize = 16) {
   // Check if a text object with class 'businessText' already exists
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "businessText");
+  const existingText = canvas.getObjects() .find((obj) => obj.className === "businessText");
 
-  // Get canvas width and height
   const canvasWidth = canvas.getWidth();
   const canvasHeight = canvas.getHeight();
 
-  // Get window width for responsive design
-  const windowWidth = window.innerWidth;
-  const windowHeight = window.innerHeight;
-
-  // Initialize fontSizeValue and position values
   let fontSizeValue = baseFontSize;
-  let topPercentage = 0.1; // Default 10% from the top of the canvas
-  let leftPercentage = 0.1; // Default 10% from the left of the canvas
+  let topPercentage = 0.1; 
+  let leftPercentage = 0.1;
 
   fontSizeValue = baseFontSize * 0.3;
   topPercentage = 2;
@@ -498,33 +545,21 @@ function addText(textContent, color, baseFontSize = 16) {
     topPercentage = 0.8;
   }
   
-
   if (chosenCurrentModel.includes('500') && chosenModel == 'round') {
     topPercentage = 1;
   }
+
   if (chosenCurrentModel.includes('750') && chosenModel == 'round') {
     topPercentage = 0.65;
   }
 
+
   const top = canvasHeight * topPercentage;
   let left = canvasWidth * leftPercentage;
 
-//   if (chosenModel !== "round") {
-//   const windowWidth = window.innerWidth;
-
-//   // Set a max width based on window size (optional)
-//   let finalMaxWidth = 50; // default
-//   if (windowWidth <= 320) finalMaxWidth = 75;
-//   else if (windowWidth <= 1024) finalMaxWidth = 75;
-
-//   // We'll center using Fabric.js properties instead of manual math
-//   left = canvasWidth * 1.4;
-// }
-
-
   const text = new fabric.Text(textContent, {
-    left: left, // Set the left position based on the percentage of canvas width
-    top: top, // Set the top position based on the percentage of canvas height
+    left: left, 
+    top: top, 
     fill: color,
     fontSize: fontSizeValue,
     fontFamily: "Arial",
@@ -532,7 +567,6 @@ function addText(textContent, color, baseFontSize = 16) {
     isDelete: false,
   });
 
-  // console.log("existingText: " + existingText);
   if (existingText) {
     existingText.set({
       fill: color,
@@ -540,7 +574,6 @@ function addText(textContent, color, baseFontSize = 16) {
     canvas.renderAll();
   } else {
     canvas.add(text);
-    // console.log("New text");
     canvas.renderAll();
   }
 
@@ -2624,6 +2657,101 @@ function toggleCustomTextStyle(styleType) {
   canvas.renderAll();
 }
 
+document.getElementById("customTextFontSize").addEventListener("input", (e) => {
+  const newSize = parseInt(e.target.value, 10);
+  updateActiveFontSize(newSize);
+});
+
+function updateActiveFontSize(newFontSize) {
+  const activeObject = canvas.getActiveObject();
+
+  if (!activeObject) return; // No selected object
+  if (!activeObject.className || !activeObject.className.includes("customText")) return; // Only custom text
+
+  // Update the font size
+  activeObject.set({ fontSize: newFontSize });
+
+  // Optional: store in your properties if you use a map
+  if (activeObject.customTextId && customTextManager) {
+    const textData = customTextManager.customTexts.get(activeObject.customTextId);
+    if (textData) {
+      textData.properties.fontSize = newFontSize;
+    }
+  }
+
+  canvas.renderAll();
+}
+
+// Function to update alignment of the currently active custom text
+function updateActiveTextAlignment(alignment) {
+  const activeObject = canvas.getActiveObject();
+
+  // Only proceed if an object is selected and is a custom text
+  if (!activeObject || !activeObject.customTextId) return;
+
+  // Update alignment
+  activeObject.set({ textAlign: alignment });
+
+  // Update internal customTextManager properties if available
+  if (customTextManager) {
+    const textData = customTextManager.customTexts.get(activeObject.customTextId);
+    if (textData) {
+      textData.properties.textAlign = alignment;
+    }
+  }
+
+  canvas.renderAll();
+
+  // Update UI: remove selected from all icons
+  document.querySelectorAll(".customTextalignment1 .alignment-icon").forEach((icon) => {
+    icon.classList.remove("selected");
+  });
+
+  // Add selected to the clicked alignment icon
+  const selectedIcon = document.getElementById(`custom-text-align-${alignment}`);
+  if (selectedIcon) selectedIcon.classList.add("selected");
+}
+
+// Attach event listeners to your alignment icons by ID
+["left", "center", "right"].forEach((align) => {
+  const icon = document.getElementById(`custom-text-align-${align}`);
+  if (icon) {
+    icon.addEventListener("click", () => updateActiveTextAlignment(align));
+  }
+});
+
+
+// Function to update color of the active custom text
+function updateActiveTextColor(color) {
+  const activeObject = canvas.getActiveObject();
+
+  // Only proceed if an object is selected and is a custom text
+  if (!activeObject || !activeObject.customTextId) return;
+
+  // Update Fabric object
+  activeObject.set({ fill: color });
+
+  // Update customTextManager properties
+  if (customTextManager) {
+    const textData = customTextManager.customTexts.get(activeObject.customTextId);
+    if (textData) {
+      textData.properties.color = color;
+    }
+  }
+
+  canvas.renderAll();
+}
+
+// Attach event listener to color input
+const colorInput = document.getElementById("customTextColor");
+if (colorInput) {
+  colorInput.addEventListener("input", (e) => {
+    updateActiveTextColor(e.target.value);
+  });
+}
+
+
+
 // Attach events to buttons
 document
   .getElementById("custom-text-bold")
@@ -2786,45 +2914,6 @@ if (fontSizeInputCustomText) {
 // ********************************************** Custom Text Implementation **********************************************
 
 
-function addCustomText(textContent, color, baseFontSize = 16) {
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-  const canvasWidth = canvas.getWidth();
-  const canvasHeight = canvas.getHeight();
-
-  let fontSizeValue = baseFontSize * 0.25;
-  let topPercentage = 1.5; // Between company name (2) and address (bottom)
-  let leftPercentage = 0.68;
-
-  const top = canvasHeight * topPercentage;
-  const left = canvasWidth * leftPercentage;
-
-  const text = new fabric.Text(textContent, {
-    left: left,
-    top: top,
-    fill: color,
-    fontSize: fontSizeValue,
-    fontFamily: "Arial",
-    className: "customTextText",
-  });
-
-  if (existingText) {
-    existingText.set({
-      text: textContent,
-      fill: color,
-    });
-    canvas.renderAll();
-  } else {
-    canvas.add(text);
-    canvas.renderAll();
-  }
-
-  customTextProperties = {
-    top: text.top,
-    left: text.left,
-  };
-}
 
 // Add custom text properties variable at the top with other properties
 let customTextProperties;
@@ -2857,7 +2946,7 @@ function addTemplateItemsWithCustomText(theme) {
         100
       );
       addText("Your Company Name", "#FFFFFF", 60, 100, 16);
-      // addCustomText("Your Custom Text", "#FFFFFF", 16);
+      
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
 
@@ -2872,105 +2961,13 @@ function addTemplateItemsWithCustomText(theme) {
         100
       );
       addText("Your Company Name", "#FFFFFF", 60, 100, 16);
-      // addCustomText("Your Custom Text", "#FFFFFF", 16);
+      
       addAddressText("Your Address Here", "#FFFFFF", 55, 580, 18);
       break;
   }
 }
 
-// ********************************************** Custom Text Event Handlers **********************************************
-
-function updateCustomTextContent() {
-  const textAreaValue = document.getElementById("customTextArea").value.trim();
-  const textContent =
-    textAreaValue.length > 0 ? textAreaValue : "Your Custom Text";
-
-  // Check if a text object with class 'customTextText' already exists
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-
-  if (existingText) {
-    // Update properties of the existing text
-    existingText.set({
-      text: textContent,
-      left: existingText.left,
-      top: existingText.top,
-      fill: existingText.fill,
-      fontSize: existingText.fontSize,
-    });
-    canvas.renderAll();
-  } else {
-    // If no existing text object is found, create a new one
-    const text = new fabric.Text(textContent, {
-      left: 100,
-      top: 200, // Position between company name and address
-      fill: "#000000",
-      fontSize: 24,
-      fontFamily: "Arial",
-      className: "customTextText",
-    });
-    canvas.add(text);
-  }
-}
-
-// Font family update for custom text
-function updateFontFamilyCustomText() {
-  const fontFamily = document.getElementById("customTextFont-family1").value;
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-
-  if (existingText) {
-    existingText.set({
-      fontFamily: fontFamily,
-    });
-    canvas.renderAll();
-  }
-}
-
-
-// Text alignment for custom text
-function updateTextAlignmentCustomText(alignment) {
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-
-  if (existingText) {
-    existingText.set({
-      textAlign: alignment,
-    });
-    canvas.renderAll();
-  }
-}
-
-// Color update for custom text
-function updateTextColorCustomText(color) {
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-
-  if (existingText) {
-    existingText.set({
-      fill: color,
-    });
-    canvas.renderAll();
-  }
-}
-
-// Font size update for custom text
-function updateFontSizeCustomText(fontSize) {
-  const existingText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "customTextText");
-
-  if (existingText) {
-    existingText.set({
-      fontSize: fontSize,
-    });
-    canvas.renderAll();
-  }
-}
+//  Custom Text Event Handlers **********************************************
 
 // ********************************************** Event Listeners Setup **********************************************
 
@@ -3149,18 +3146,18 @@ document.addEventListener("DOMContentLoaded", function () {
   // ============ CUSTOM TEXT SETUP ============
 
   // Listen for input changes in the custom text area
-  const customTextArea = document.getElementById("customTextArea");
-  if (customTextArea) {
-    customTextArea.addEventListener("input", updateCustomTextContent);
-  }
+  // const customTextArea = document.getElementById("customTextArea");
+  // if (customTextArea) {
+  //   customTextArea.addEventListener("input", updateCustomTextContent);
+  // }
 
   // Font family change listener
-  const customTextFontFamily = document.getElementById(
-    "customTextFont-family1"
-  );
-  if (customTextFontFamily) {
-    customTextFontFamily.addEventListener("change", updateFontFamilyCustomText);
-  }
+  // const customTextFontFamily = document.getElementById(
+  //   "customTextFont-family1"
+  // );
+  // if (customTextFontFamily) {
+  //   customTextFontFamily.addEventListener("change", updateFontFamilyCustomText);
+  // }
 
   // Font style change listener
   // const customTextFontStyle = document.getElementById('customTextfont-style1');
