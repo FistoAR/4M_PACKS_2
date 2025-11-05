@@ -298,17 +298,81 @@ function adjustTextProperties() {
   // ✅ Render after updating positions
   canvas.renderAll();
   
-  const companyNameTA = document.getElementById('textArea');
-  companyNameTA.value = '';
-  companyNameTA.dispatchEvent(new Event('input'));
+  resetInputFields();
 
-  const addressTA = document.getElementById('textArea1');
-  addressTA.value = '';
-  addressTA.dispatchEvent(new Event('input'));
   // ✅ Mark as aligned
   hasTextBeenAligned = true;
   console.log("Company name and address text have been horizontally centered.");
 }
+
+function resetInputFields() {
+  // Reset textareas
+
+  // set default text font to arial
+  const companyNameText = canvas.getObjects().find((obj) => obj.className === "businessText");
+  companyNameText.set({fontFamily: "Arial"});
+
+  const addressText = canvas.getObjects().find((obj) => obj.className === "addressText");
+  addressText.set({fontFamily: "Arial"});
+
+  // reset input fields - text area
+  const textAreas = ['textArea', 'textArea1', 'customTextArea'];
+  textAreas.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = '';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+ 
+  // reset dropdown - font family
+  document.getElementById('dropdownButton').innerHTML = 'Select Font';
+
+  document.getElementById('addressFont-family1').selectedIndex = 0;
+  document.getElementById('customTextFont-family').selectedIndex = 0;
+
+
+  // reset - font size input
+  const fontSizes = ['numberInput1', 'addressnumberInput1', 'customTextFontSize'];
+  fontSizes.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = (id == 'addressnumberInput1' || id == 'customTextFontSize') ? 14 : 18;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+  // Reset file inputs
+  const fileInputs = ['fileInput', 'fileInput2', 'fileInput3'];
+  fileInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = ''; // clears the file selection
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+  fileSelectionText.innerText = `Choose a file or drag & drop it here`;
+  promotionFileSelectionText.innerText = `Choose multiple images or drag & drop them here`;
+  
+}
+
+function removeAllUploadedImages() {
+  const objects = canvas.getObjects();
+
+  // Filter and remove all objects with className === "uploadedImage"
+  objects.forEach(obj => {
+    if (obj.className === "uploadedImage") {
+      canvas.remove(obj);
+    }
+  });
+
+  canvas.renderAll(); // Refresh the canvas after removing
+  console.log("All uploaded images removed from canvas");
+}
+
 
 function saveState() {
   const json = JSON.stringify({
@@ -753,6 +817,8 @@ document.querySelectorAll(".dropdown-content1 img").forEach((img) => {
       // addTemplateItems(templateNumber);
       doTemplateChangeWithCustomText(theme);
 
+      
+
       console.log("Template is being changed...");
     };
 
@@ -763,6 +829,9 @@ document.querySelectorAll(".dropdown-content1 img").forEach((img) => {
       showConfirmModal().then((confirmed) => {
         if (confirmed) {
           isLogoChanged = false;
+          resetInputFields();
+          removeAllUploadedImages();
+          removeAllCustomText();
           handleTemplateChange(); // ✅ Run the main logic after confirmation
         } else {
           console.log("Template change cancelled.");
@@ -775,6 +844,24 @@ document.querySelectorAll(".dropdown-content1 img").forEach((img) => {
     handleTemplateChange();
   });
 });
+
+function removeAllCustomText() {
+  // Get all objects from the Fabric canvas
+  const allObjects = canvas.getObjects();
+
+  // Filter only those with className === "customText"
+  const textObjects = allObjects.filter(obj => obj.className === "customText");
+
+  // Remove each one from the canvas
+  textObjects.forEach(obj => canvas.remove(obj));
+
+  // Clear selection and re-render
+  canvas.discardActiveObject();
+  canvas.renderAll();
+
+  console.log(`${textObjects.length} custom text objects removed`);
+}
+
 
 function showConfirmModal() {
   return new Promise((resolve) => {
@@ -805,9 +892,7 @@ function doTemplateChangeWithCustomText(theme) {
 let lastTemplateClicked = null; // Keep track of the last clicked template number
 
 function changeAddressAlignment(checkCondition, templateNumber) {
-  let addressText = canvas
-    .getObjects()
-    .find((obj) => obj.className === "addressText"); // Assuming you have a reference to your addressText object
+  let addressText = canvas.getObjects().find((obj) => obj.className === "addressText"); // Assuming you have a reference to your addressText object
 
   // If the same template is clicked again, do nothing
   if (templateNumber === lastTemplateClicked) {
