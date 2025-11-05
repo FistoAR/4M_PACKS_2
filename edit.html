@@ -7,7 +7,7 @@
     <title>4M Packs</title>
 
     <!-- ******************************* CSS  *********************************** -->
-    <link rel="stylesheet" href="./assets/css/style.css?v=12">
+    <link rel="stylesheet" href="./assets/css/style.css?v=13">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- ******************************* Font Links  ***************************** -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -463,8 +463,8 @@
 
 
                                     <label for="customTextColor" class="color-picker-label">
-                                        <img src="./assets/images/color-picker-img.svg" alt="color-circle" class="w-15 "
-                                             />
+                                        <img src="./assets/images/color-picker-img.svg" alt="color-circle"
+                                            class="w-15 " />
                                         <input type="color" id="customTextColor" name="color" value="#b42929ff"
                                             style=" width: 30%; border: none; position: absolute; opacity: 0; pointer-events: none;">
                                     </label>
@@ -496,7 +496,7 @@
                         </div>
                         <div class="uploadsec2" id="uploadsec2" style="display: none;">
                             <div class="upload-area" id="uploadArea2">
-                                <input type="file" id="fileInput2" style="display: none" accept="image/*"
+                                <input type="file" id="fileInput2" style="display: none" multiple accept="image/*"
                                     aria-label="Select multiple images to upload">
                                 <img src="./assets/images/uploadarrow.svg" alt="Open file manager"
                                     title="Open file manager" loading="eager" width="5%" height="auto"
@@ -543,8 +543,8 @@
             <div class="rightsection" style="position: relative;">
                 <!-- Template Image -->
                 <a style="display: none;">
-                    <img id="right-section-image" src="./assets/images/images/default_round.png"
-                        alt="template1" title="template1" loading="eager" width="5%" height="auto">
+                    <img id="right-section-image" src="./assets/images/images/default_round.png" alt="template1"
+                        title="template1" loading="eager" width="5%" height="auto">
                 </a>
 
                 <!-- Logo Image Section -->
@@ -584,7 +584,7 @@
     </div>
 
     <!-- 3d model popup -->
-<!-- 
+    <!-- 
     <div id="modelViewerModal" class="modal">
         <div class="modal-content">
             <img src="./assets/images/360-degrees.gif" alt="" class="model-360-img">
@@ -720,6 +720,18 @@
             <button id="cancelBtn">Cancel</button>
         </div>
     </div>
+
+    <!-- Custom confirmation modal -->
+    <div id="confirmModal" class="confirm-modal">
+        <div class="confirm-content">
+            <p>Changing the template will reset your logo.<br>Do you want to continue?</p>
+            <div class="confirm-buttons">
+                <button id="confirmYes">Yes</button>
+                <button id="confirmNo">No</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ************************* Script Section ************************* -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"
@@ -739,10 +751,10 @@
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="./new.js?v=12"></script>
-    <script src="./assets/js/image.js?v=12"></script>
-    <script src="./assets/js/script.js?v=12"></script>
-    <script src="./assets/js/script2.js?v=12"></script>
+    <script src="./new.js?v=13"></script>
+    <script src="./assets/js/image.js?v=13"></script>
+    <script src="./assets/js/script.js?v=13"></script>
+    <script src="./assets/js/script2.js?v=13"></script>
 
 
     <script>

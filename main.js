@@ -1177,7 +1177,7 @@ function selectModel(modelIndex) {
     customizeButton.style.display = 'none';
     is50ml = true;
     sessionStorage.setItem("model_50", is50ml);
-    if (model.type == "sipper") {colorChangeFunction("lid");} else colorChangeFunction();
+    
   }
   else {
     customizeButton.style.display = 'flex';
@@ -1185,6 +1185,8 @@ function selectModel(modelIndex) {
     sessionStorage.setItem("model_50", is50ml);
     colorChangeFunction();
   }
+
+  if (model.type == "sipper") {colorChangeFunction("lid");} else colorChangeFunction();
 
   // togglePatternsSection();
 

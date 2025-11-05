@@ -8,6 +8,8 @@ let tapColor = "#FF0000";
 const history = [];
 let historyIndex = -1;
 
+let isLogoChanged = false;
+
 function clearCanvas() {
   // Clear all objects from the canvas
   canvas.clear();
@@ -155,12 +157,25 @@ function createTemplates(chosenModel) {
             requiredWidth = 4360;
             requiredHeight = 701;
           }
+          
+          else if (chosenCurrentModel.includes('120') && chosenModel == 'sipper') {
+            requiredWidth = 2500;
+            requiredHeight = 500;
+          }
+          
+          else if (chosenCurrentModel.includes('250') && chosenModel == 'sipper') {
+            requiredWidth = 1396;
+            requiredHeight = 635;
+          }
+          
+          else if (chosenCurrentModel.includes('350') && chosenModel == 'sipper') {
+            requiredWidth = 2900;
+            requiredHeight = 1500;
+          }
         
 
         if (img.width !== requiredWidth || img.height !== requiredHeight) {
-          alert(
-            `Image must be exactly ${requiredWidth}x${requiredHeight} pixels.`
-          );
+          showToast(`Image must be exactly ${requiredWidth}x${requiredHeight} pixels.`, 'error');
           return;
         }
 
@@ -221,7 +236,6 @@ function adjustTextProperties() {
   const topV = canvasHeight / 2;
   console.log(`Top value round & sipper: ${topV}`);
 
-
   if (businessText) {
     businessText.set({
       top: topV,
@@ -234,7 +248,8 @@ function adjustTextProperties() {
       hasBorders: true,
       selectable: true,
       isDelete: false,
-      evented: true
+      evented: true,
+      opacity: 1
       
     });
   }
@@ -269,6 +284,7 @@ function adjustTextProperties() {
       selectable: true,
       isDelete: false,
       evented: true,
+      opacity: 1
     });
   }
 
@@ -282,6 +298,13 @@ function adjustTextProperties() {
   // ✅ Render after updating positions
   canvas.renderAll();
   
+  const companyNameTA = document.getElementById('textArea');
+  companyNameTA.value = '';
+  companyNameTA.dispatchEvent(new Event('input'));
+
+  const addressTA = document.getElementById('textArea1');
+  addressTA.value = '';
+  addressTA.dispatchEvent(new Event('input'));
   // ✅ Mark as aligned
   hasTextBeenAligned = true;
   console.log("Company name and address text have been horizontally centered.");
@@ -594,6 +617,7 @@ function addText(textContent, color, baseFontSize = 12) {
     fontSize: fontSizeValue,
     fontFamily: "Arial",
     className: "businessText",
+    opacity: 0, 
     isDelete: false,
   });
 
@@ -679,6 +703,7 @@ console.log(`Value of left: ${left}`);
       fontFamily: "Arial",
       className: "addressText",
       isDelete: false,
+      opacity: 0, 
     });
     canvas.add(text);
 
@@ -702,30 +727,78 @@ document.querySelectorAll(".dropdown-content1 img").forEach((img) => {
     if (img.classList.contains("custom-template-button")) {
       return;
     }
-    document
-      .querySelectorAll(".dropdown-content1 img")
-      .forEach((btn) => btn.classList.remove("selected"));
-    e.target.classList.add("selected");
-    const templateNumber = parseInt(img.getAttribute("template-no")); // Assuming each image has a data-templateNumber attribute
-    const theme = img.getAttribute("data-theme"); // Assuming each image has a data-templateNumber attribute
 
-    const getImageSrc = img.src;
+    const handleTemplateChange = () => {
+      document
+        .querySelectorAll(".dropdown-content1 img")
+        .forEach((btn) => btn.classList.remove("selected"));
 
-    tapColor = img.getAttribute("tap-color");
+      e.target.classList.add("selected");
 
-    if (templateNumber == 9 || templateNumber == "9") {
-      changeAddressAlignment("yes", 9);
-    } else if (templateNumber == 16 || templateNumber == "16") {
-      changeAddressAlignment("yes", 16);
-    } else {
-      changeAddressAlignment("no", null);
+      const templateNumber = parseInt(img.getAttribute("template-no"));
+      const theme = img.getAttribute("data-theme");
+      const getImageSrc = img.src;
+
+      tapColor = img.getAttribute("tap-color");
+
+      if (templateNumber == 9) {
+        changeAddressAlignment("yes", 9);
+      } else if (templateNumber == 16) {
+        changeAddressAlignment("yes", 16);
+      } else {
+        changeAddressAlignment("no", null);
+      }
+
+      setBackgroundImage(getImageSrc, true);
+      // addTemplateItems(templateNumber);
+      doTemplateChangeWithCustomText(theme);
+
+      console.log("Template is being changed...");
+    };
+
+    if (isLogoChanged) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      showConfirmModal().then((confirmed) => {
+        if (confirmed) {
+          isLogoChanged = false;
+          handleTemplateChange(); // ✅ Run the main logic after confirmation
+        } else {
+          console.log("Template change cancelled.");
+        }
+      });
+      return;
     }
 
-    setBackgroundImage(getImageSrc, true);
-    // addTemplateItems(parseInt(templateNumber));
-    doTemplateChangeWithCustomText(theme);
+    // If logo not changed, just proceed normally
+    handleTemplateChange();
   });
 });
+
+function showConfirmModal() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("confirmModal");
+    const yesBtn = document.getElementById("confirmYes");
+    const noBtn = document.getElementById("confirmNo");
+
+    modal.style.display = "flex";
+
+    const closeModal = (confirmed) => {
+      modal.style.display = "none";
+      yesBtn.removeEventListener("click", onYes);
+      noBtn.removeEventListener("click", onNo);
+      resolve(confirmed);
+    };
+
+    const onYes = () => closeModal(true);
+    const onNo = () => closeModal(false);
+
+    yesBtn.addEventListener("click", onYes);
+    noBtn.addEventListener("click", onNo);
+  });
+}
+
 function doTemplateChangeWithCustomText(theme) {
   addTemplateItemsWithCustomText(theme);
 }
@@ -1148,6 +1221,8 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
 
               finalImg.bringToFront(); // optional
               canvas.renderAll();
+
+              isLogoChanged = true;
 
               console.log(
                 `🎯 New logo added at (${finalImg.left}, ${finalImg.top}) | Draggable: ${finalImg.selectable}`

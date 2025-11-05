@@ -2402,3 +2402,64 @@ textarea:focus {
     width: 12% !important;
     height: auto !important;
 }
+
+/* custom confirmation box */
+.confirm-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-family: sans-serif;
+}
+
+.confirm-content {
+  background: #fff;
+  color: #000;
+  border: 2px solid #d32f2f;
+  border-radius: 6px;
+  padding: 20px 25px;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.confirm-content p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.confirm-buttons button {
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+#confirmYes {
+  background-color: #d32f2f;
+  color: #fff;
+}
+
+#confirmYes:hover {
+  background-color: #b71c1c;
+}
+
+#confirmNo {
+  background-color: #000;
+  color: #fff;
+}
+
+#confirmNo:hover {
+  background-color: #333;
+}
