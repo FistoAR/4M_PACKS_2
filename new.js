@@ -5,6 +5,8 @@ class CustomTextManager {
     this.customTexts = new Map(); // Store custom text objects with unique IDs
     this.textCounter = 0;
     this.activeTextId = null;
+    this.currentColumn = 2; // Track current column
+    this.textsInCurrentColumn = 0; // Track texts in current column
     this.init();
   }
 
@@ -30,7 +32,6 @@ class CustomTextManager {
       }
 
       // Alignment icons
-     
     });
 
     document.addEventListener("input", (e) => {
@@ -74,58 +75,211 @@ class CustomTextManager {
     }
   }
 
+  // addNewCustomText() {
+  //   this.textCounter++;
+  //   const textId = `customText_${this.textCounter}`;
+
+  //   // Calculate position for new text (spread them out)
+  //   const canvasWidth = this.canvas.getWidth();
+  //   const canvasHeight = this.canvas.getHeight();
+
+  //   const baseTop = canvasHeight * 0.3;
+  //   const offsetTop = (this.textCounter - 1) * 40; // Offset each new text
+  //   const left = canvasWidth * 0.5;
+
+  //   // Create fabric text object
+  //   const fabricText = new fabric.IText(`Custom Text ${this.textCounter}`, {
+  //     left: left,
+  //     top: baseTop + offsetTop,
+  //     fill: "#000000",
+  //     fontSize: 16,
+  //     fontFamily: "Arial",
+  //     textAlign: "left",
+  //     className: "customText",
+  //     customTextId: textId,
+  //   });
+
+  //   // Add to canvas
+  //   this.canvas.add(fabricText);
+
+  //   fabricText.customType = "customTextText";
+
+  //   // Store in our map
+  //   this.customTexts.set(textId, {
+  //     fabricObject: fabricText,
+  //     properties: {
+  //       text: `Custom Text ${this.textCounter}`,
+  //       fontFamily: "Arial",
+  //       fontSize: 16,
+  //       fontStyle: "normal",
+  //       color: "#000000",
+  //       textAlign: "left",
+  //       top: baseTop + offsetTop,
+  //       left: left,
+  //     },
+  //   });
+
+  //   // Add to UI list
+  //   // this.addTextToList(textId, `Custom Text ${this.textCounter}`);
+
+  //   // Select the new text
+  //   this.selectCustomText(textId);
+
+  //   this.canvas.renderAll();
+  // }
+
+  // addNewCustomText() {
+  //   this.textCounter++;
+  //   const textId = `customText_${this.textCounter}`;
+
+  //   // Calculate position for new text (spread them out)
+  //   const canvasWidth = this.canvas.getWidth();
+  //   const canvasHeight = this.canvas.getHeight();
+
+  //   // Calculate proposed position
+  //   const baseTop = canvasHeight * 0.3;
+  //   const offsetTop = (this.textCounter - 1) * 40; // Offset each new text
+  //   const proposedTop = baseTop + offsetTop;
+
+  //   // Check if the text would go beyond canvas bounds
+  //   // Assuming average text height of ~20-30px, add buffer
+  //   const textBuffer = 50; // Buffer for text height
+  //   const maxAllowableTop = canvasHeight - textBuffer;
+
+  //   // If proposed position exceeds canvas, place it in center instead
+  //   let finalTop;
+  //   if (proposedTop > maxAllowableTop) {
+  //     finalTop = canvasHeight * 0.5; // Center vertically
+  //   } else {
+  //     finalTop = proposedTop;
+  //   }
+
+  //   const left = canvasWidth * 0.5;
+
+  //   // Create fabric text object
+  //   const fabricText = new fabric.IText(`Custom Text ${this.textCounter}`, {
+  //     left: left,
+  //     top: finalTop,
+  //     fill: "#000000",
+  //     fontSize: 16,
+  //     fontFamily: "Arial",
+  //     textAlign: "left",
+  //     className: "customText",
+  //     customTextId: textId,
+  //   });
+
+  //   // Add to canvas
+  //   this.canvas.add(fabricText);
+  //   fabricText.customType = "customTextText";
+
+  //   // Store in our map
+  //   this.customTexts.set(textId, {
+  //     fabricObject: fabricText,
+  //     properties: {
+  //       text: `Custom Text ${this.textCounter}`,
+  //       fontFamily: "Arial",
+  //       fontSize: 16,
+  //       fontStyle: "normal",
+  //       color: "#000000",
+  //       textAlign: "left",
+  //       top: finalTop,
+  //       left: left,
+  //     },
+  //   });
+
+  //   // Add to UI list
+  //   // this.addTextToList(textId, `Custom Text ${this.textCounter}`);
+
+  //   // Select the new text
+  //   this.selectCustomText(textId);
+  //   this.canvas.renderAll();
+  // }
+
   addNewCustomText() {
     this.textCounter++;
     const textId = `customText_${this.textCounter}`;
-
-    // Calculate position for new text (spread them out)
+    
+    // Calculate canvas dimensions
     const canvasWidth = this.canvas.getWidth();
     const canvasHeight = this.canvas.getHeight();
-
+    
+    // Configuration
     const baseTop = canvasHeight * 0.3;
-    const offsetTop = (this.textCounter - 1) * 40; // Offset each new text
-    const left = canvasWidth * 0.5;
+    const verticalSpacing = 40; // Space between texts vertically
+    const textBuffer = 50; // Buffer for text height
+    const maxAllowableTop = canvasHeight - textBuffer;
+    const columnWidth = 200; // Width allocated per column
+    const leftMargin = 50; // Starting left margin
+    const maxColumns = Math.floor((canvasWidth - leftMargin) / columnWidth);
+    
+    // Calculate proposed position in current column
+    const proposedTop = baseTop + (this.textsInCurrentColumn * verticalSpacing);
+    
+    let finalLeft, finalTop, placedInCenter = false;
+    
+    // Check if text fits in current column
+    if (proposedTop <= maxAllowableTop) {
+        // Fits in current column
+        finalLeft = leftMargin + (this.currentColumn * columnWidth);
+        finalTop = proposedTop;
+        this.textsInCurrentColumn++;
+    } else {
+        // Current column is full, try next column
+        this.currentColumn++;
+        this.textsInCurrentColumn = 1; // Reset counter for new column
+        
+        // Check if we have space for another column
+        if (this.currentColumn < maxColumns) {
+            finalLeft = leftMargin + (this.currentColumn * columnWidth);
+            finalTop = baseTop;
+        } else {
+            // No more columns available - place in center and show toast
+            finalLeft = canvasWidth * 0.5;
+            finalTop = canvasHeight * 0.5;
+            placedInCenter = true;
+            
+            // Trigger toast notification
+            if (typeof showToast === 'function') {
+                showToast('Text positioned at center due to insufficient canvas space');
+            }
+        }
+    }
 
     // Create fabric text object
     const fabricText = new fabric.IText(`Custom Text ${this.textCounter}`, {
-      left: left,
-      top: baseTop + offsetTop,
-      fill: "#000000",
-      fontSize: 16,
-      fontFamily: "Arial",
-      textAlign: "left",
-      className: "customText",
-      customTextId: textId,
+        left: finalLeft,
+        top: finalTop,
+        fill: "#000000",
+        fontSize: 16,
+        fontFamily: "Arial",
+        textAlign: "left",
+        className: "customText",
+        customTextId: textId,
     });
 
     // Add to canvas
     this.canvas.add(fabricText);
-
     fabricText.customType = "customTextText";
 
     // Store in our map
     this.customTexts.set(textId, {
-      fabricObject: fabricText,
-      properties: {
-        text: `Custom Text ${this.textCounter}`,
-        fontFamily: "Arial",
-        fontSize: 16,
-        fontStyle: "normal",
-        color: "#000000",
-        textAlign: "left",
-        top: baseTop + offsetTop,
-        left: left,
-      },
+        fabricObject: fabricText,
+        properties: {
+            text: `Custom Text ${this.textCounter}`,
+            fontFamily: "Arial",
+            fontSize: 16,
+            fontStyle: "normal",
+            color: "#000000",
+            textAlign: "left",
+            top: finalTop,
+            left: finalLeft,
+        },
     });
-
-    // Add to UI list
-    // this.addTextToList(textId, `Custom Text ${this.textCounter}`);
 
     // Select the new text
     this.selectCustomText(textId);
-
     this.canvas.renderAll();
-  }
+}
 
   selectCustomText(textId) {
     // Remove active class from all items
@@ -236,32 +390,31 @@ class CustomTextManager {
     }
   }
 
-updateActiveFontSize(fontSize) {
+  updateActiveFontSize(fontSize) {
     let textData;
 
     if (this.activeTextId) {
-        textData = this.customTexts.get(this.activeTextId);
+      textData = this.customTexts.get(this.activeTextId);
     } else {
-        const activeObj = this.canvas.getActiveObject();
-        if (activeObj && activeObj.className === "customText") {
-            textData = Array.from(this.customTexts.values()).find(
-                t => t.fabricObject === activeObj
-            );
-            if (textData) {
-                this.activeTextId = Object.keys(this.customTexts).find(
-                    key => this.customTexts.get(key) === textData
-                );
-            }
+      const activeObj = this.canvas.getActiveObject();
+      if (activeObj && activeObj.className === "customText") {
+        textData = Array.from(this.customTexts.values()).find(
+          (t) => t.fabricObject === activeObj
+        );
+        if (textData) {
+          this.activeTextId = Object.keys(this.customTexts).find(
+            (key) => this.customTexts.get(key) === textData
+          );
         }
+      }
     }
 
     if (!textData) return;
 
-    textData.fabricObject.set('fontSize', fontSize);
+    textData.fabricObject.set("fontSize", fontSize);
     textData.properties.fontSize = fontSize;
     this.canvas.renderAll();
-}
-
+  }
 
   updateActiveColor(color) {
     if (!this.activeTextId) return;

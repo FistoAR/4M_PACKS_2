@@ -5,6 +5,17 @@ let hasTextBeenAligned = false; // ✅ global flag to prevent multiple alignment
 
 let tapColor = "#FF0000";
 
+const logoRemoveBtn = document.getElementById('removeLogo');
+let globalLogoProp = {
+src: "./assets/images/logohereimage.png",
+maxWidth: 100,
+logoColor: "white",
+textColor: "white",
+top: 7,
+width: 100
+};
+
+
 const history = [];
 let historyIndex = -1;
 
@@ -531,6 +542,7 @@ function addTemplateItems(templateNumber) {
 }
 
 function addLogo(src, maxWidth, logoColor, textColor, top, width) {
+  globalLogoProp = {src: src, maxWidth: maxWidth, logoColor: logoColor, textColor: textColor, top: top, width: width};
   fetch(src)
     .then((response) => response.blob())
     .then((blob) => {
@@ -625,6 +637,8 @@ function addLogo(src, maxWidth, logoColor, textColor, top, width) {
           // Add the image to the canvas
           canvas.add(img);
           canvas.renderAll();
+
+          logoRemoveBtn.style.display = 'none';
 
           logoProperties = {
             top: topPosition,
@@ -1308,6 +1322,8 @@ function uploadLogo(src, maxWidth = 175, maxHeight = 175) {
               canvas.renderAll();
 
               isLogoChanged = true;
+
+              logoRemoveBtn.style.display = 'block';
 
               console.log(
                 `🎯 New logo added at (${finalImg.left}, ${finalImg.top}) | Draggable: ${finalImg.selectable}`
@@ -3461,4 +3477,17 @@ navBackButton.addEventListener("click", () => {
       window.location.replace("index.html");
     }
   }, 100);
+});
+
+
+// reset logo
+logoRemoveBtn.addEventListener("click", () => {
+  addLogo(
+    globalLogoProp.src,
+    globalLogoProp.maxWidth,
+    globalLogoProp.logoColor,
+    globalLogoProp.textColor,
+    globalLogoProp.top,
+    globalLogoProp.width
+  );
 });
